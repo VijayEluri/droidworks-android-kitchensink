@@ -97,22 +97,56 @@ public class StringUtils {
 	    return hexString.toString();
 	  }
 
+	  // just a simple method to transform values like 4 to 04, but
+	  // values like 14 will come back as 14.
+	  public static String addLeadingZero(long value) {
+		  if (value <= 10)
+			  return "0" + Long.toString(value);
 
-		/**
-		 * Formats a duration in miliseconds to M:S format. For example,
-		 * 2000 milis would return "0:02"
-		 *
-		 * @param milis
-		 * @return
-		 */
-		public static String getFormattedTime(long milis) {
-			String minutes = String.valueOf( (int) (milis / 60000));
-			String seconds = String.valueOf( (int)(milis % 60000) / 1000);
+		  return Long.toString(value);
+	  }
 
-			while (seconds.length() < 2)
-				seconds = "0" + seconds;
+	  public static String formatHMS(long seconds) {
 
-			return minutes + ":" + seconds;
-		}
+		  String duration = null;
+
+		  // handle hh:mm:ss
+		  if (seconds >= 3600) {
+			  String hours = Long.toString(seconds / 3600);
+			  long leftover = seconds % 3600;
+
+			  duration = hours + ":"
+			  	+ addLeadingZero(leftover / 60) + ":"
+			  	+ addLeadingZero(leftover % 60);
+		  }
+		  // handle mm:ss
+		  else if (seconds >= 60) {
+			  duration = Long.toString(seconds / 60) + ":"
+			  	+ addLeadingZero(seconds % 60);
+		  }
+		  // handle seconds only
+		  else {
+			  duration = Long.toString(seconds);
+		  }
+
+		  return duration;
+	  }
+
+	 /**
+      * Formats a duration in miliseconds to M:S format. For example,
+	  * 2000 milis would return "0:02"
+	  *
+	  * @param milis
+      * @return
+	  */
+	  public static String getFormattedTime(long milis) {
+		String minutes = String.valueOf( (int) (milis / 60000));
+		String seconds = String.valueOf( (int)(milis % 60000) / 1000);
+
+		while (seconds.length() < 2)
+			seconds = "0" + seconds;
+
+		return minutes + ":" + seconds;
+	}
 
 }
