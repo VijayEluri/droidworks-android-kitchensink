@@ -20,6 +20,15 @@ public class DurationParserTest extends InstrumentationTestCase {
 	public void testParse() {
 		long result = parser.parse("10");
 		assertEquals(10, result);
+
+		result = parser.parse("3:10");
+		assertEquals(190, result);
+
+		result = parser.parse("20:10");
+		assertEquals(1210, result);
+
+		result = parser.parse("3:20:10");
+		assertEquals(12010, result);
 	}
 
 }
