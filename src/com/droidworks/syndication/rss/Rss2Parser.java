@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 
-import android.app.Activity;
+import android.os.Handler;
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
@@ -35,8 +35,8 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 	private static final String LOG_LABEL = "Rss2Parser";
 
-	public Rss2Parser(Activity activity, FeedAdapter adapter) {
-		super(activity, adapter, "");
+	public Rss2Parser(Handler uiHandler, FeedAdapter adapter) {
+		super(uiHandler, adapter, "");
 	}
 
 	@Override
@@ -150,13 +150,22 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 		feedItemNode.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
+				Log.d(LOG_LABEL, "parsing a feed item");
 				mFeedItem = new FeedItem();
 			}
 		});
 
 		feedItemNode.setEndElementListener(new EndElementListener() {
 			public void end() {
-				mActivity.runOnUiThread(new Runnable() {
+				Log.d("Rss2Parser", "trying to add a feed item");
+
+				if (mUiHandler == null) {
+					mAdapter.addItem(mFeedItem);
+					mAdapter.notifyDataSetChanged();
+					return;
+				}
+
+				mUiHandler.post(new Runnable() {
 					public void run() {
 						mAdapter.addItem(mFeedItem);
 						mAdapter.notifyDataSetChanged();

@@ -7,7 +7,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import android.app.Activity;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.ListAdapter;
 
@@ -15,14 +15,13 @@ import android.widget.ListAdapter;
 public abstract class Parser<T extends ListAdapter> {
 
 	protected final T mAdapter;
-	// we need runOnUiThread, i'm not sure what's better, doing this or
-	// passing in a handler,
-	protected final Activity mActivity;
+	// need a uiHandler
+	protected final Handler mUiHandler;
 	protected final String mNamespace;
 
-	public Parser(Activity activity, T adapter, String namespace) {
+	public Parser(Handler uiHandler, T adapter, String namespace) {
 		mAdapter = adapter;
-		mActivity = activity;
+		mUiHandler = uiHandler;
 		mNamespace = namespace;
 
 		System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
