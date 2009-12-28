@@ -32,8 +32,9 @@ public class Rss2ParserTest extends InstrumentationTestCase {
 
 		Rss2Parser parser = new Rss2Parser(null, adapter);
 		parser.parse(feed);
-
 		assertEquals(60, adapter.getCount());
+		FeedItem item = (FeedItem) adapter.getItem(0);
+		assertTrue(item.getItunesDuration() > 0);
 	}
 
 	private class TestFeedAdapter extends FeedAdapter {
