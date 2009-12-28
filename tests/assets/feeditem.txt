@@ -1,0 +1,25 @@
+<item>
+  <title>Episode-344- The Christmas Show for 2009</title>
+  <link>http://feedproxy.google.com/~r/survivalpcast/~3/lpZEdiBWXmE/episode-344-the-christmas-show-for-2009</link>
+  <comments>http://www.thesurvivalpodcast.com/episode-344-the-christmas-show-for-2009#comments</comments>
+  <pubDate>Thu, 24 Dec 2009 15:46:41 +0000</pubDate>
+  <dc:creator>Modern Survival</dc:creator>
+  <category><![CDATA[Survival Preparedness]]></category>
+  <category><![CDATA[american history]]></category>
+  <category><![CDATA[christmas]]></category>
+  <category><![CDATA[family]]></category>
+  <guid isPermaLink="false">http://www.thesurvivalpodcast.com/?p=1432</guid>
+  <description> .... </description>
+  <wfw:commentRss>http://www.thesurvivalpodcast.com/episode-344-the-christmas-show-for-2009/feed</wfw:commentRss>
+  <itunes:duration>25:47</itunes:duration>
+  <itunes:subtitle> ... </itunes:subtitle>
+  <itunes:summary> ...  </itunes:summary>
+  <itunes:keywords>Survival,Preparedness</itunes:keywords>
+  <itunes:author>TheSurvivalPodcast</itunes:author>
+  <itunes:explicit>no</itunes:explicit>
+  <itunes:block>No</itunes:block>
+  <media:content url="..." fileSize="12376088" type="audio/mpeg" />
+  <feedburner:origLink>http://www.thesurvivalpodcast.com/episode-344-the-christmas-show-for-2009</feedburner:origLink>
+  <enclosure url="..." length="12376088" type="audio/mpeg" />
+  <feedburner:origEnclosureLink>http://www.survivalpodcast.net/audio/dec-09/epi-00344-2009-christmas-special.mp3</feedburner:origEnclosureLink>
+</item>
