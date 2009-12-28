@@ -2,10 +2,12 @@ package com.droidworks.xml;
 
 import java.io.InputStream;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import android.os.Handler;
 import android.util.Log;
@@ -24,8 +26,6 @@ public abstract class Parser<T extends ListAdapter> {
 		mUiHandler = uiHandler;
 		mNamespace = namespace;
 
-		System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
-
 		setupNodes();
 	}
 
@@ -35,9 +35,15 @@ public abstract class Parser<T extends ListAdapter> {
 
 	public void parse(InputStream stream) {
 		try {
-			XMLReader reader = XMLReaderFactory.createXMLReader();
-			reader.setContentHandler(getContentHandler());
-			reader.parse(new InputSource(stream));
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            SAXParser sp = spf.newSAXParser();
+
+            /* Get the XMLReader of the SAXParser we created. */
+            XMLReader xr = sp.getXMLReader();
+
+
+			xr.setContentHandler(getContentHandler());
+			xr.parse(new InputSource(stream));
 			stream.close();
 		}
 		catch (Exception e) {

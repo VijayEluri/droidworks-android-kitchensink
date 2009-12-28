@@ -35,6 +35,9 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 	private static final String LOG_LABEL = "Rss2Parser";
 
+	private static final String NS_ITUNES = "http://www.itunes.com/dtds/podcast-1.0.dtd";
+	private static final String NS_MEDIA = "http://search.yahoo.com/mrss/";
+
 	public Rss2Parser(Handler uiHandler, FeedAdapter adapter) {
 		super(uiHandler, adapter, "");
 	}
@@ -49,52 +52,48 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 	    final SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 
-		mRootElement = new RootElement(mNamespace, "rss");
+		mRootElement = new RootElement("rss");
 
-		Element channelNode = mRootElement.getChild(mNamespace, "channel");
+		Element channelNode = mRootElement.getChild("channel");
 
 		// channel sub nodes
-		Element titleNode = channelNode.getChild(mNamespace, "title");
-		Element linkNode = channelNode.getChild(mNamespace, "link");
-		Element descriptionNode = channelNode.getChild(mNamespace, "description");
-		Element pubDateNode = channelNode.getChild(mNamespace, "pubDate");
-		Element languageNode = channelNode.getChild(mNamespace, "language");
-		Element generatorNode = channelNode.getChild(mNamespace, "generator");
-		Element copyrightNode = channelNode.getChild(mNamespace, "copyright");
-		Element managingEditorNode = channelNode.getChild(mNamespace,
-				"managingEditor");
-		Element categoryNode = channelNode.getChild(mNamespace, "category");
-		Element ttlNode = channelNode.getChild(mNamespace, "TTL");
-		Element imageNode = channelNode.getChild(mNamespace, "image");
-		Element imageHeightNode = imageNode.getChild(mNamespace, "height");
-		Element imageWidthNode = imageNode.getChild(mNamespace, "width");
-		Element imageUrlNode = imageNode.getChild(mNamespace, "url");
-		Element imageTitleNode = imageNode.getChild(mNamespace, "title");
-		Element imageLinkNode = imageNode.getChild(mNamespace, "link");
+		Element titleNode = channelNode.getChild("title");
+		Element linkNode = channelNode.getChild("link");
+		Element descriptionNode = channelNode.getChild("description");
+		Element pubDateNode = channelNode.getChild("pubDate");
+		Element languageNode = channelNode.getChild("language");
+		Element generatorNode = channelNode.getChild("generator");
+		Element copyrightNode = channelNode.getChild("copyright");
+		Element managingEditorNode = channelNode.getChild("managingEditor");
+		Element categoryNode = channelNode.getChild("category");
+		Element ttlNode = channelNode.getChild("TTL");
 
-		Element feedItemNode = channelNode.getChild(mNamespace, "item");
-		Element feedItemTitleNode = feedItemNode.getChild(mNamespace, "title");
-		Element feedItemLinkNode = feedItemNode.getChild(mNamespace, "link");
-		Element feedItemCommentsNode = feedItemNode.getChild(mNamespace, "comments");
-		Element feedItemPubDateNode = feedItemNode.getChild(mNamespace, "pubDate");
-		Element feedItemGuidNode = feedItemNode.getChild(mNamespace, "guid");
-		Element feedItemDescriptionNode = feedItemNode.getChild(mNamespace, "description");
-		Element feedItemMediaNode = feedItemNode.getChild("media", "content");
-		Element feedItemItunesSummary = feedItemNode.getChild("itunes", "summary");
-		Element feedItemItunesDuration = feedItemNode.getChild("itunes", "duration");
+		Element imageNode = channelNode.getChild("image");
+		Element imageHeightNode = imageNode.getChild("height");
+		Element imageWidthNode = imageNode.getChild("width");
+		Element imageUrlNode = imageNode.getChild("url");
+		Element imageTitleNode = imageNode.getChild("title");
+		Element imageLinkNode = imageNode.getChild("link");
 
-		// TODO, the parser is currently broken i think, it's not properly parsing
-		// the itunes stuff apparently..need to figure out what's up.
+		Element feedItemNode = channelNode.getChild("item");
+		Element feedItemTitleNode = feedItemNode.getChild("title");
+		Element feedItemLinkNode = feedItemNode.getChild("link");
+		Element feedItemCommentsNode = feedItemNode.getChild("comments");
+		Element feedItemPubDateNode = feedItemNode.getChild("pubDate");
+		Element feedItemGuidNode = feedItemNode.getChild("guid");
+		Element feedItemDescriptionNode = feedItemNode.getChild("description");
+		Element feedItemMediaNode = feedItemNode.getChild(NS_MEDIA, "content");
+		Element feedItemItunesSummary = feedItemNode.getChild(NS_ITUNES, "summary");
+		Element feedItemItunesDuration = feedItemNode.getChild(NS_ITUNES,"duration");
+
 		feedItemItunesDuration.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				Log.d(LOG_LABEL, "parsing duration: " + body);
 				mFeedItem.setItunesDuration(mDurationParser.parse(body));
 			}
  		});
 
 		feedItemItunesSummary.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				Log.d(LOG_LABEL, "parsing summary: " + body);
 				mFeedItem.setItunesSummary(body);
 			}
 		});
@@ -150,14 +149,12 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 		feedItemNode.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
-				Log.d(LOG_LABEL, "parsing a feed item");
 				mFeedItem = new FeedItem();
 			}
 		});
 
 		feedItemNode.setEndElementListener(new EndElementListener() {
 			public void end() {
-				Log.d("Rss2Parser", "trying to add a feed item");
 
 				if (mUiHandler == null) {
 					mAdapter.addItem(mFeedItem);
