@@ -33,6 +33,7 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 	private FeedItem mFeedItem;
 
+	@SuppressWarnings("unused")
 	private static final String LOG_LABEL = "Rss2Parser";
 
 	private static final String NS_ITUNES = "http://www.itunes.com/dtds/podcast-1.0.dtd";
@@ -156,18 +157,22 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 		feedItemNode.setEndElementListener(new EndElementListener() {
 			public void end() {
 
+				final FeedItem tmpItem = mFeedItem;
+				mFeedItem = null;
+
 				if (mUiHandler == null) {
-					mAdapter.addItem(mFeedItem);
+					mAdapter.addItem(tmpItem);
 					mAdapter.notifyDataSetChanged();
 					return;
 				}
 
 				mUiHandler.post(new Runnable() {
 					public void run() {
-						mAdapter.addItem(mFeedItem);
+						mAdapter.addItem(tmpItem);
 						mAdapter.notifyDataSetChanged();
 					}
 				});
+
 			}
 		});
 
