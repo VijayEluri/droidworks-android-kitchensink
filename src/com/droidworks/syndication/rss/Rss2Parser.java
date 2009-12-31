@@ -160,16 +160,16 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 				final FeedItem tmpItem = mFeedItem;
 				mFeedItem = null;
 
-				if (mUiHandler == null) {
-					mAdapter.addItem(tmpItem);
-					mAdapter.notifyDataSetChanged();
+				if (getUiHandler() == null) {
+					getAdapter().addItem(tmpItem);
+					getAdapter().notifyDataSetChanged();
 					return;
 				}
 
-				mUiHandler.post(new Runnable() {
+				getUiHandler().post(new Runnable() {
 					public void run() {
-						mAdapter.addItem(tmpItem);
-						mAdapter.notifyDataSetChanged();
+						getAdapter().addItem(tmpItem);
+						getAdapter().notifyDataSetChanged();
 					}
 				});
 
@@ -199,7 +199,7 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 				FeedAdapter.Image image = new FeedAdapter.Image(
 						mImageUrl, mImageTitle, mImageLink, mImageWidth,
 						mImageHeight);
-				mAdapter.setFeedImage(image);
+				getAdapter().setFeedImage(image);
 			}
 		});
 
@@ -217,44 +217,44 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 		ttlNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setTTL(Integer.parseInt(body));
+				getAdapter().setTTL(Integer.parseInt(body));
 			}
 		});
 
 		categoryNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setCategory(body);
+				getAdapter().setCategory(body);
 			}
 		});
 
 		managingEditorNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setManagingEditor(body);
+				getAdapter().setManagingEditor(body);
 			}
 		});
 
 		copyrightNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setCopyright(body);
+				getAdapter().setCopyright(body);
 			}
 		});
 
 		languageNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setLanguage(body);
+				getAdapter().setLanguage(body);
 			}
 		});
 
 		generatorNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setGenerator(body);
+				getAdapter().setGenerator(body);
 			}
 		});
 
 		pubDateNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
 				try {
-					mAdapter.setPubDate(df.parse(body));
+					getAdapter().setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
 					Log.e(getClass().getCanonicalName(), "Error parsing pubDate");
@@ -264,19 +264,19 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 		descriptionNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setDescription(body);
+				getAdapter().setDescription(body);
 			}
 		});
 
 		linkNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setLink(body);
+				getAdapter().setLink(body);
 			}
 		});
 
 		titleNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setTitle(body);
+				getAdapter().setTitle(body);
 			}
 		});
 

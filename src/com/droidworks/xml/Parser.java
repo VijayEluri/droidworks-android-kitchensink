@@ -16,10 +16,10 @@ import android.widget.ListAdapter;
 
 public abstract class Parser<T extends ListAdapter> {
 
-	protected final T mAdapter;
+	private final T mAdapter;
 	// need a uiHandler
-	protected final Handler mUiHandler;
-	protected final String mNamespace;
+	private final Handler mUiHandler;
+	private final String mNamespace;
 
 	public Parser(Handler uiHandler, T adapter, String namespace) {
 		mAdapter = adapter;
@@ -51,4 +51,17 @@ public abstract class Parser<T extends ListAdapter> {
 					"Failure parsing document", e);
 		}
 	}
+
+	public T getAdapter() {
+		return mAdapter;
+	}
+
+	public Handler getUiHandler() {
+		return mUiHandler;
+	}
+
+	public String getNamespace() {
+		return mNamespace;
+	}
+
 }
