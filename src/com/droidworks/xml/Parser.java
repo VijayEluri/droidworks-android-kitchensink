@@ -41,7 +41,6 @@ public abstract class Parser<T extends ListAdapter> {
             /* Get the XMLReader of the SAXParser we created. */
             XMLReader xr = sp.getXMLReader();
 
-
 			xr.setContentHandler(getContentHandler());
 			xr.parse(new InputSource(stream));
 			stream.close();
