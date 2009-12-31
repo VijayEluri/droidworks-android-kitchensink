@@ -37,10 +37,9 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeVideoAdapter> {
 	private long mDuration;
 	private String mThumbnailUrl;
 
-	public YouTubeVideoFeedParser(Handler uiHandler, YouTubeVideoAdapter adapter,
-			String namespace) {
+	public YouTubeVideoFeedParser(Handler uiHandler, YouTubeVideoAdapter adapter) {
 
-		super(uiHandler, adapter, namespace);
+		super(uiHandler, adapter, "http://www.w3.org/2005/Atom");
 		mAdapter = adapter;
 	}
 

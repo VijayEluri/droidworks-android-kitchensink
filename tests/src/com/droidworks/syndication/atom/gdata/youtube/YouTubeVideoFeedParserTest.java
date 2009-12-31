@@ -18,7 +18,8 @@ public class YouTubeVideoFeedParserTest extends InstrumentationTestCase {
 		InputStream input = assets.open("youtubefeed.txt");
 
 		YouTubeVideoFeedParser parser
-			= new YouTubeVideoFeedParser(null, testAdapter, "http://www.w3.org/2005/Atom");
+			= new YouTubeVideoFeedParser(null, testAdapter);
+		// "http://www.w3.org/2005/Atom");
 
 		// 2009-12-04T22:51:39.000-0000
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
