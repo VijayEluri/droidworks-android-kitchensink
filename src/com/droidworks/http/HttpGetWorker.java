@@ -11,7 +11,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
 
 // TODO, added connnection timeout support, needs to be tested
 
@@ -43,7 +42,7 @@ public class HttpGetWorker implements Callable<HttpResponse> {
         mMethod = method;
         mAccecptedHttpStatusCodes = codes;
         mClient = new DefaultHttpClient();
-		setupTimeout(mClient, connectionTimeoutSeconds);
+		HttpUtils.setConnectionTimeout(mClient, connectionTimeoutSeconds);
     }
 
 
@@ -67,13 +66,4 @@ public class HttpGetWorker implements Callable<HttpResponse> {
         return response;
     }
 
-    private void setupTimeout(HttpClient client, int timeout) {
-    	// Set the timeout in milliseconds until a connection is established.
-    	HttpConnectionParams.setConnectionTimeout(client.getParams(),
-    			timeout * 1000);
-    	// Set the default socket timeout (SO_TIMEOUT)
-    	// in milliseconds which is the timeout for waiting for data.
-    	HttpConnectionParams.setSoTimeout(client.getParams(),
-    			timeout * 1000);
-    }
 }
