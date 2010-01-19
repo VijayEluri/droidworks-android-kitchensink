@@ -205,12 +205,9 @@ public class AsyncDownloader {
 						_outputFile = null;
 						task = mTasks.poll(mPollDuration, TimeUnit.SECONDS);
 
-						Log.d(LOG_LABEL, getName() + " pulled a task: " + task);
-
 						// shutdown on a null task
 						if (task == null || _shutdown) {
 							_shutdown = true;
-							Log.d(LOG_LABEL, getName() + " is shutting down");
 							return;
 						}
 
@@ -218,21 +215,16 @@ public class AsyncDownloader {
 						if (task.getUrl() != null) {
 							HttpGet get = new HttpGet(task.getUrl());
 							_worker = new HttpGetWorker(get, null, task.getTimeout());
-							Log.d(LOG_LABEL, getName() + " initialized a worker: " + _worker);
 						}
 					}
 
 					// if we have a worker, then we can do the download.
 					if (_worker != null) {
 						try {
-							Log.d("AsyncDownloader", "submitting a task: " + task.getUrl());
-
 							HttpResponse response = mExecutor.submit(_worker)
 								.get(mDownloadCompleteTimeout, TimeUnit.SECONDS);
 
 							writeFile(response.getEntity().getContent());
-
-							Log.d(LOG_LABEL, "task completed normally: " + task.getUrl());
 						}
 						catch (ExecutionException e) {
 							if (e.getCause() instanceof SocketTimeoutException) {
@@ -251,8 +243,6 @@ public class AsyncDownloader {
 							Log.e(LOG_LABEL, "Caught exception: " + task.getUrl(), e );
 						}
 					}
-
-					Log.d(LOG_LABEL, "listener count: " + task.getListeners().size());
 
 					// notify listeners
 					for (DownloadCompletedListener l : task.getListeners()) {
