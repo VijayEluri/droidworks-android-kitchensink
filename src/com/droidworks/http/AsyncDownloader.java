@@ -1,102 +1,287 @@
 package com.droidworks.http;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+
+import android.os.Environment;
+import android.util.Log;
+
+import com.droidworks.util.AndroidUtils;
 
 public class AsyncDownloader {
 
+	public static int STATUS_OK = 0;
+	public static int STATUS_TIMED_OUT = 1;
+	public static int STATUS_NO_STORAGE = 2;
+	public static int STATUS_FILE_WRITE_ERROR = 3;
+	public static int STATUS_CANCELLED = 4;
+	public static int STATUS_GENERAL_ERROR = 5;
+
 	public static final AsyncDownloader mDownloader = new AsyncDownloader();
 
-	private ArrayBlockingQueue<DownloadTask> mTasks
-		= new ArrayBlockingQueue<DownloadTask>(500);
+	public static final String LOG_LABEL = "AsyncDownloader";
 
-	private ArrayList<DownloadLooper> mLoopers
-		= new ArrayList<DownloadLooper>();
+	private LinkedBlockingQueue<DownloadTask> mTasks
+		= new LinkedBlockingQueue<DownloadTask>(500);
 
-	private int mMaxThreads = 3;
+	private LinkedList<DownloadLooper> mLoopers
+		= new LinkedList<DownloadLooper>();
 
+	private int mMaxThreads = 10;
+	private int mPollDuration = 5;
+	private int mDownloadCompleteTimeout = 3600;
+
+	private static int mLooperCount = 0;
+
+	private ExecutorService mExecutor;
+
+	/**
+	 * The number of seconds a thread will wait for a new task before
+	 * shutting itself down.  You probably don't want to change this
+	 * under normal conditions.
+	 *
+	 * @param seconds
+	 */
+	public synchronized void setPollingDuration(int seconds) {
+		mPollDuration = seconds;
+	}
+
+	/**
+	 * Returns the number of active download threads.
+	 *
+	 * @return
+	 */
 	public synchronized int getThreadCount() {
-		return mLoopers.size();
+		int count = 0;
+		for (DownloadLooper l : mLoopers) {
+			if (l.getState() != Thread.State.TERMINATED)
+				count++;
+		}
+		return count;
 	}
 
 	public synchronized void addDownloadTask(DownloadTask task) {
 		mTasks.add(task);
 
 		// if no threads are running then we always start a thread
-		if (mLoopers.size() == 0) {
-			DownloadLooper looper = new DownloadLooper();
-			new Thread(looper).start();
-			mLoopers.add(looper);
+		if (getThreadCount() == 0) {
+			startNewLooper();
 		}
 		// if we have a backlog and have room for more threads, fire
 		// another one up
-		else if (mTasks.size() > 1 && mLoopers.size() < mMaxThreads) {
-			DownloadLooper looper = new DownloadLooper();
-			new Thread(looper).start();
-			mLoopers.add(looper);
+		else if (mTasks.size() > 1 && getThreadCount() < mMaxThreads) {
+			startNewLooper();
+		}
+
+		drainLoopers();
+	}
+
+	// drain off dead loopers
+	private void drainLoopers() {
+		ArrayList<DownloadLooper> removeList = new ArrayList<DownloadLooper>();
+		for (DownloadLooper l : mLoopers) {
+			if (l.getState() == Thread.State.TERMINATED) {
+				removeList.add(l);
+			}
+		}
+		for (DownloadLooper l : removeList) {
+			mLoopers.remove(l);
 		}
 	}
 
-	public void cancelAll() {
-		// TODO cancel EVERYTHING
+	private void startNewLooper() {
+		DownloadLooper looper = new DownloadLooper("Looper " + ++mLooperCount);
+		looper.start();
+		mLoopers.add(looper);
 	}
 
-	public void setMaxThreads(int count) {
+	public synchronized void cancelAll() {
+		for (DownloadLooper l : mLoopers) {
+			l.cancel();
+			l.interrupt();
+		}
+	}
+
+	public synchronized void setMaxThreads(int count) {
 		mMaxThreads = count;
 	}
 
+	// private to prevent instantiation
 	private AsyncDownloader() {
-		// prevent instantiation
+		mExecutor = Executors.newCachedThreadPool();
 	}
 
 	public static AsyncDownloader getDownloader() {
 		return mDownloader;
 	}
 
-	class DownloadLooper implements Runnable {
+	class DownloadLooper extends Thread {
 
 		private boolean _shutdown = false;
+		private HttpGetWorker _worker;
+
+		private int _resultCode;
+		private String _outputFile;
+
+		public DownloadLooper(String name) {
+			super(name);
+		}
+
+		public void cancel() {
+			_shutdown = true;
+
+			if (_worker != null) {
+				_worker.cancel();
+			}
+		}
+
+		private void writeFile(InputStream is) {
+			if (!AndroidUtils.hasStorage(true)) {
+				_resultCode = STATUS_NO_STORAGE;
+			}
+
+	        String directoryName = Environment
+        	.	getExternalStorageDirectory().toString() + "/tmp";
+
+	        File directory = new File(directoryName);
+
+	        if (!directory.isDirectory()) {
+	            if (!directory.mkdirs()) {
+	            	Log.e(LOG_LABEL, "can't create directory: " + directoryName);
+					_resultCode = STATUS_FILE_WRITE_ERROR;
+					return;
+	            }
+	        }
+	        try {
+				File tmpFile = File.createTempFile("ad_", null, directory);
+				FileOutputStream os = new FileOutputStream(tmpFile);
+				byte[] data = new byte[512];
+				int bytesRead = 0;
+				while ((bytesRead = is.read(data)) != -1) {
+					os.write(data, 0, bytesRead);
+
+					if (_shutdown) {
+						_resultCode = STATUS_CANCELLED;
+						return;
+					}
+				}
+
+				// if we get here we suceeeded
+				_outputFile = tmpFile.getAbsolutePath();
+				_resultCode = STATUS_OK;
+				is.close();
+			}
+	        catch (IOException e) {
+				Log.e(LOG_LABEL, "Exception creating temp file", e);
+				_resultCode = STATUS_FILE_WRITE_ERROR;
+				return;
+	        }
+		}
 
 		@Override
 		public void run() {
 			while (!_shutdown) {
 
-				// grab a task, but only wait 5 seconds;
+				DownloadTask task;
+
+				// grab a task
 				try {
-					DownloadTask task = mTasks.poll(5, TimeUnit.SECONDS);
-					String path = null;
+					synchronized (mDownloader) {
+						_resultCode = -1;
+						_outputFile = null;
+						task = mTasks.poll(mPollDuration, TimeUnit.SECONDS);
 
-					// shutdown on a null task
-					if (task == null) {
-						_shutdown = true;
-						mLoopers.remove(this);
-						return;
+						Log.d(LOG_LABEL, getName() + " pulled a task: " + task);
+
+						// shutdown on a null task
+						if (task == null || _shutdown) {
+							_shutdown = true;
+							Log.d(LOG_LABEL, getName() + " is shutting down");
+							return;
+						}
+
+						// if we have a valid task, init a worker
+						if (task.getUrl() != null) {
+							HttpGet get = new HttpGet(task.getUrl());
+							_worker = new HttpGetWorker(get, null, task.getTimeout());
+							Log.d(LOG_LABEL, getName() + " initialized a worker: " + _worker);
+						}
 					}
 
-					if (task.getUrl() != null) {
-						// TODO, do some stuff
+					// if we have a worker, then we can do the download.
+					if (_worker != null) {
+						try {
+							Log.d("AsyncDownloader", "submitting a task: " + task.getUrl());
+
+							HttpResponse response = mExecutor.submit(_worker)
+								.get(mDownloadCompleteTimeout, TimeUnit.SECONDS);
+
+							writeFile(response.getEntity().getContent());
+
+							Log.d(LOG_LABEL, "task completed normally: " + task.getUrl());
+						}
+						catch (ExecutionException e) {
+							if (e.getCause() instanceof SocketTimeoutException) {
+								_resultCode = AsyncDownloader.STATUS_TIMED_OUT;
+							}
+							// cancelled tasks are receiving an EE
+							Log.e(LOG_LABEL, "Caught execution exception on task: " + task.getUrl(), e );
+						} catch (TimeoutException e) {
+							_resultCode = STATUS_TIMED_OUT;
+							Log.e(LOG_LABEL, "Caught timeout exception task: " + task.getUrl(), e );
+						} catch (IllegalStateException e) {
+							_resultCode = STATUS_GENERAL_ERROR;
+							Log.e(LOG_LABEL, "Caught exception: " + task.getUrl(), e );
+						} catch (IOException e) {
+							_resultCode = STATUS_GENERAL_ERROR;
+							Log.e(LOG_LABEL, "Caught exception: " + task.getUrl(), e );
+						}
 					}
+
+					Log.d(LOG_LABEL, "listener count: " + task.getListeners().size());
+
 					// notify listeners
 					for (DownloadCompletedListener l : task.getListeners()) {
-						l.onDownloadComplete(path);
+						l.onDownloadComplete(_outputFile, _resultCode);
 					}
 				}
-				catch (InterruptedException e) {
-					// TODO, i need to test this
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				catch (InterruptedException ignored) {
+					_shutdown = true;
 				}
 			}
 		}
 	}
 
+
 	public static class DownloadTask {
 
 		private final String mUrl;
+		private int mTimeOut = 10;  // default to a 10 second connection timeout
 
 		private final ArrayList<DownloadCompletedListener> mListeners
 			= new ArrayList<DownloadCompletedListener>();
+
+		public void setTimeout(int seconds) {
+			mTimeOut = seconds;
+		}
+
+		public int getTimeout() {
+			return mTimeOut;
+		}
 
 		public DownloadTask(String url) {
 			mUrl = url;
@@ -116,7 +301,7 @@ public class AsyncDownloader {
 	}
 
 	public interface DownloadCompletedListener {
-		public void onDownloadComplete(String path);
+		public void onDownloadComplete(String path, int resultCode);
 	}
 
 }

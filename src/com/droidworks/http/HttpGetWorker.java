@@ -12,14 +12,16 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-// TODO, added connnection timeout support, needs to be tested
+import android.util.Log;
 
 /**
  * @author Jason Hudgins <jasonleehudgins@gmail.com>
  */
 public class HttpGetWorker implements Callable<HttpResponse> {
 
-    private final HttpGet mMethod;
+    private static final String LOG_LABEL = "HttpGetWorker";
+
+	private final HttpGet mMethod;
     private final Set<Integer> mAccecptedHttpStatusCodes;
     private final HttpClient mClient;
 
@@ -38,18 +40,21 @@ public class HttpGetWorker implements Callable<HttpResponse> {
     }
 
     public HttpGetWorker(HttpGet method, Set<Integer> codes,
-    		int connectionTimeoutSeconds) {
-        mMethod = method;
+    		int seconds) {
+
+    	mMethod = method;
         mAccecptedHttpStatusCodes = codes;
         mClient = new DefaultHttpClient();
-		HttpUtils.setConnectionTimeout(mClient, connectionTimeoutSeconds);
+        HttpUtils.setConnectionTimeout(mClient, seconds);
     }
 
 
-    public HttpResponse call() throws HttpException, ClientProtocolException, IOException {
+    public HttpResponse call() throws HttpException, ClientProtocolException,
+    		IOException {
 
-        HttpResponse response = null;
-        response = mClient.execute(this.mMethod);
+    	Log.d(LOG_LABEL, "HttpGetWorker executing method: " + mMethod.getURI());
+        HttpResponse response = mClient.execute(mMethod);
+    	Log.d(LOG_LABEL, "HttpGetWorker finished executing " + mMethod.getURI());
 
         int code = response.getStatusLine().getStatusCode();
 
@@ -66,4 +71,8 @@ public class HttpGetWorker implements Callable<HttpResponse> {
         return response;
     }
 
+    public void cancel() {
+    	Log.d(LOG_LABEL, "HttpGetWorker is aborting");
+    	mMethod.abort();
+    }
 }
