@@ -37,7 +37,7 @@ public class YouTubeItem {
 		return mDescription;
 	}
 
-	public String getYoutubeUrl() {
+	public String getYouTubeUrl() {
 		return mYouTubeUrl;
 	}
 
@@ -49,7 +49,7 @@ public class YouTubeItem {
 		return mThumbnailUrl;
 	}
 
-	public String getYoutubeId() {
+	public String getYouTubeId() {
 		return mYouTubeId;
 	}
 
