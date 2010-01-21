@@ -30,15 +30,15 @@ public class YouTubeVideoFeedParserTest extends InstrumentationTestCase {
 
 		YouTubeItem item = (YouTubeItem) testAdapter.getItem(0);
 
-		assertEquals(testDate, item.datePublished);
+		assertEquals(testDate, item.getDatePublished());
 		assertEquals("A Country Boy Can Survive on Doves, Bacon and Jalapenos",
-				item.title);
-		assertEquals("e shot a h", item.description.substring(10, 20));
+				item.getTitle());
+		assertEquals("e shot a h", item.getDescription().substring(10, 20));
 		assertEquals("http://www.youtube.com/watch?v=HcyY4iAX-AI&feature=youtube_gdata",
-			item.youtubeUrl);
-		assertEquals(158, item.duration);
-		assertEquals("http://i.ytimg.com/vi/HcyY4iAX-AI/0.jpg", item.thumbnailUrl);
-		assertEquals("HcyY4iAX-AI", item.youtubeId);
+			item.getYouTubeUrl());
+		assertEquals(158, item.getDuration());
+		assertEquals("http://i.ytimg.com/vi/HcyY4iAX-AI/0.jpg", item.getThumbnailUrl());
+		assertEquals("HcyY4iAX-AI", item.getYouTubeId());
 	}
 
 
