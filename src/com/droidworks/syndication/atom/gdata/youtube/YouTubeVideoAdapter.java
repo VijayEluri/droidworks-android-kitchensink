@@ -36,7 +36,7 @@ public abstract class YouTubeVideoAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		return mItems.get(position).youtubeId.hashCode();
+		return mItems.get(position).getYoutubeId().hashCode();
 	}
 
 }

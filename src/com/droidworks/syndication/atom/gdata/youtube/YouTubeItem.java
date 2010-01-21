@@ -4,27 +4,53 @@ import java.util.Date;
 
 public class YouTubeItem {
 
-	public final Date datePublished;
-	public final String title;
-	public final String description;
-	public final String youtubeUrl;
-	public final long duration;
-	public final String thumbnailUrl;
-	public final String youtubeId;
+	private final Date mDatePublished;
+	private final String mTitle;
+	private final String mDescription;
+	private final String mYouTubeUrl;
+	private final long mDuration;
+	private final String mThumbnailUrl;
+	private final String mYouTubeId;
 
 	public YouTubeItem(Date datePublished, String title, String description,
 			String youtubeUrl, long duration, String thumbnailUrl,
 			String youtubeId) {
 
-		super();
+		mDatePublished = datePublished;
+		mTitle = title;
+		mDescription = description;
+		mYouTubeUrl = youtubeUrl;
+		mDuration = duration;
+		mThumbnailUrl = thumbnailUrl;
+		mYouTubeId = youtubeId;
+	}
 
-		this.datePublished = datePublished;
-		this.title = title;
-		this.description = description;
-		this.youtubeUrl = youtubeUrl;
-		this.duration = duration;
-		this.thumbnailUrl = thumbnailUrl;
-		this.youtubeId = youtubeId;
+	public Date getDatePublished() {
+		return mDatePublished;
+	}
+
+	public String getTitle() {
+		return mTitle;
+	}
+
+	public String getDescription() {
+		return mDescription;
+	}
+
+	public String getYoutubeUrl() {
+		return mYouTubeUrl;
+	}
+
+	public long getDuration() {
+		return mDuration;
+	}
+
+	public String getThumbnailUrl() {
+		return mThumbnailUrl;
+	}
+
+	public String getYoutubeId() {
+		return mYouTubeId;
 	}
 
 
