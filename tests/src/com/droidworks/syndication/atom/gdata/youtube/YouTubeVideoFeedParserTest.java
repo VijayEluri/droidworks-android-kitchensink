@@ -6,8 +6,6 @@ import java.util.Date;
 
 import android.content.res.AssetManager;
 import android.test.InstrumentationTestCase;
-import android.view.View;
-import android.view.ViewGroup;
 
 public class YouTubeVideoFeedParserTest extends InstrumentationTestCase {
 
@@ -17,18 +15,16 @@ public class YouTubeVideoFeedParserTest extends InstrumentationTestCase {
 
 		InputStream input = assets.open("youtubefeed.txt");
 
-		YouTubeVideoFeedParser parser
-			= new YouTubeVideoFeedParser(null, testAdapter);
-		// "http://www.w3.org/2005/Atom");
+		YouTubeVideoFeedParser parser = new YouTubeVideoFeedParser();
 
 		// 2009-12-04T22:51:39.000-0000
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		Date testDate = df.parse("2009-12-04T22:51:39.000-0000");
 
 		parser.parse(input);
-		assertEquals("survivalpodcasting", testAdapter.getAuthor());
 
-		YouTubeItem item = (YouTubeItem) testAdapter.getItem(0);
+		assertEquals("survivalpodcasting", parser.getFeed().getFeedAuthor());
+		YouTubeItem item = parser.getFeed().getItem(0);
 
 		assertEquals(testDate, item.getDatePublished());
 		assertEquals("A Country Boy Can Survive on Doves, Bacon and Jalapenos",
@@ -42,13 +38,4 @@ public class YouTubeVideoFeedParserTest extends InstrumentationTestCase {
 	}
 
 
-	private final YouTubeVideoAdapter testAdapter = new YouTubeVideoAdapter() {
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// dummy impl
-			return null;
-		}
-
-	};
 }

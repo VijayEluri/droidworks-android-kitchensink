@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 
-import android.os.Handler;
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
@@ -20,7 +19,7 @@ import com.droidworks.xml.Parser;
 /*
  * Parser for RSS 2.0 syndication feeds.  Supports some itunes tags
  */
-public class Rss2Parser extends Parser<FeedAdapter> {
+public class Rss2Parser extends Parser<FeedItem> {
 
 	private RootElement mRootElement;
 
@@ -32,15 +31,14 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 	private final DurationParser mDurationParser = new DurationParser();
 
 	private FeedItem mFeedItem;
+	private final Feed mFeed = new Feed();
 
-	@SuppressWarnings("unused")
-	private static final String LOG_LABEL = "Rss2Parser";
-
+	private static final String DEFAULT_NAMESPACE = "";
 	private static final String NS_ITUNES = "http://www.itunes.com/dtds/podcast-1.0.dtd";
 	private static final String NS_MEDIA = "http://search.yahoo.com/mrss/";
 
-	public Rss2Parser(Handler uiHandler, FeedAdapter adapter) {
-		super(uiHandler, adapter, "");
+	public Rss2Parser() {
+		super(DEFAULT_NAMESPACE);
 	}
 
 	@Override
@@ -160,19 +158,13 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 				final FeedItem tmpItem = mFeedItem;
 				mFeedItem = null;
 
-				if (getUiHandler() == null) {
-					getAdapter().addItem(tmpItem);
-					getAdapter().notifyDataSetChanged();
-					return;
+				// always add items to the feed
+				mFeed.addItem(tmpItem);
+
+				// notify a listener if present
+				if (getListener() != null) {
+					getListener().onItemParsed(tmpItem);
 				}
-
-				getUiHandler().post(new Runnable() {
-					public void run() {
-						getAdapter().addItem(tmpItem);
-						getAdapter().notifyDataSetChanged();
-					}
-				});
-
 			}
 		});
 
@@ -199,7 +191,7 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 				FeedAdapter.Image image = new FeedAdapter.Image(
 						mImageUrl, mImageTitle, mImageLink, mImageWidth,
 						mImageHeight);
-				getAdapter().setFeedImage(image);
+				mFeed.setFeedImage(image);
 			}
 		});
 
@@ -217,44 +209,44 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 		ttlNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setTTL(Integer.parseInt(body));
+				mFeed.setTTL(Integer.parseInt(body));
 			}
 		});
 
 		categoryNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setCategory(body);
+				mFeed.setCategory(body);
 			}
 		});
 
 		managingEditorNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setManagingEditor(body);
+				mFeed.setManagingEditor(body);
 			}
 		});
 
 		copyrightNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setCopyright(body);
+				mFeed.setCopyright(body);
 			}
 		});
 
 		languageNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setLanguage(body);
+				mFeed.setLanguage(body);
 			}
 		});
 
 		generatorNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setGenerator(body);
+				mFeed.setGenerator(body);
 			}
 		});
 
 		pubDateNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
 				try {
-					getAdapter().setPubDate(df.parse(body));
+					mFeed.setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
 					Log.e(getClass().getCanonicalName(), "Error parsing pubDate");
@@ -264,22 +256,25 @@ public class Rss2Parser extends Parser<FeedAdapter> {
 
 		descriptionNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setDescription(body);
+				mFeed.setDescription(body);
 			}
 		});
 
 		linkNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setLink(body);
+				mFeed.setLink(body);
 			}
 		});
 
 		titleNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				getAdapter().setTitle(body);
+				mFeed.setTitle(body);
 			}
 		});
+	}
 
+	public Feed getFeed() {
+		return mFeed;
 	}
 
 }

@@ -2,16 +2,12 @@ package com.droidworks.syndication.rss;
 
 import java.io.InputStream;
 
-import android.content.Context;
 import android.content.res.AssetManager;
 import android.test.InstrumentationTestCase;
-import android.view.View;
-import android.view.ViewGroup;
 
 public class Rss2ParserTest extends InstrumentationTestCase {
 
 	AssetManager assetManager;
-	FeedAdapter adapter;
 
 	@Override
 	protected void tearDown() throws Exception {
@@ -23,32 +19,17 @@ public class Rss2ParserTest extends InstrumentationTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		assetManager = getInstrumentation().getContext().getAssets();
-		adapter = new TestFeedAdapter(getInstrumentation().getTargetContext());
 	}
 
 	public void testParser() throws Exception {
-		InputStream feed = assetManager.open("testfeed.txt");
-		assertNotNull(feed);
+		InputStream stream = assetManager.open("testfeed.txt");
+		assertNotNull(stream);
 
-		Rss2Parser parser = new Rss2Parser(null, adapter);
-		parser.parse(feed);
-		assertEquals(60, adapter.getCount());
-		FeedItem item = (FeedItem) adapter.getItem(0);
+		Rss2Parser parser = new Rss2Parser();
+		parser.parse(stream);
+		assertEquals(60, parser.getFeed().getItems().size());
+		FeedItem item = parser.getFeed().getItem(0);
 		assertTrue(item.getItunesDuration() > 0);
-	}
-
-	private class TestFeedAdapter extends FeedAdapter {
-
-		public TestFeedAdapter(Context context) {
-			super(context);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// stub
-			return null;
-		}
-
 	}
 
 }

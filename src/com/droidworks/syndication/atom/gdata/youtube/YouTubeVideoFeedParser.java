@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 
-import android.os.Handler;
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
@@ -18,17 +17,12 @@ import android.sax.StartElementListener;
 
 import com.droidworks.xml.Parser;
 
-public class YouTubeVideoFeedParser extends Parser<YouTubeVideoAdapter> {
+public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 
 	RootElement mRootElement;
 
 	public static final String NS_MEDIA = "http://search.yahoo.com/mrss/";
 	public static final String NS_YT = "http://gdata.youtube.com/schemas/2007";
-
-	private final YouTubeVideoAdapter mAdapter;
-
-	@SuppressWarnings("unused")
-	private final String LOG_LABEL = "YouTubeVideoFeedParser";
 
 	private Date mDatePublished;
 	private String mTitle;
@@ -37,10 +31,10 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeVideoAdapter> {
 	private long mDuration;
 	private String mThumbnailUrl;
 
-	public YouTubeVideoFeedParser(Handler uiHandler, YouTubeVideoAdapter adapter) {
+	private final YouTubeFeed mFeed = new YouTubeFeed();
 
-		super(uiHandler, adapter, "http://www.w3.org/2005/Atom");
-		mAdapter = adapter;
+	public YouTubeVideoFeedParser() {
+		super("http://www.w3.org/2005/Atom");
 	}
 
 	@Override
@@ -50,17 +44,17 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeVideoAdapter> {
 
 	@Override
 	protected void setupNodes() {
-		mRootElement = new RootElement(getNamespace(), "feed");
+		mRootElement = new RootElement(getDefaultNamespace(), "feed");
 
 		// 2009-12-04T22:51:39.000-0000
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-		Element authorNode = mRootElement.requireChild(getNamespace(), "author");
-		Element authorNameNode = authorNode.requireChild(getNamespace(), "name");
+		Element authorNode = mRootElement.requireChild(getDefaultNamespace(), "author");
+		Element authorNameNode = authorNode.requireChild(getDefaultNamespace(), "name");
 
-		Element entryNode = mRootElement.getChild(getNamespace(), "entry");
-		Element pubDateNode = entryNode.getChild(getNamespace(), "published");
-		Element titleNode = entryNode.getChild(getNamespace(), "title");
+		Element entryNode = mRootElement.getChild(getDefaultNamespace(), "entry");
+		Element pubDateNode = entryNode.getChild(getDefaultNamespace(), "published");
+		Element titleNode = entryNode.getChild(getDefaultNamespace(), "title");
 
 		Element mediaGroupNode = entryNode.requireChild(NS_MEDIA, "group");
 		Element descriptionNode = mediaGroupNode.requireChild(NS_MEDIA, "description");
@@ -101,7 +95,7 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeVideoAdapter> {
 
 		authorNameNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mAdapter.setAuthor(body);
+				mFeed.setFeedAuthor(body);
 			}
 		});
 
@@ -123,15 +117,12 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeVideoAdapter> {
 						mTitle, mDescription, mYouTubeUrl,
 						mDuration, mThumbnailUrl, parseId(mYouTubeUrl));
 
-				if (getUiHandler() == null) {
-					mAdapter.addItem(item);
-				}
-				else {
-					getUiHandler().post(new Runnable() {
-						public void run() {
-							mAdapter.addItem(item);
-						}
-					});
+				// always add an item to the feed
+				mFeed.addItem(item);
+
+				// notify a listener if there is one.
+				if (getListener() != null) {
+					getListener().onItemParsed(item);
 				}
 			}
 		});
@@ -145,6 +136,10 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeVideoAdapter> {
 			return m.group(1);
 
 		return null;
+	}
+
+	public YouTubeFeed getFeed() {
+		return mFeed;
 	}
 
 }

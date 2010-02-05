@@ -9,23 +9,23 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import android.os.Handler;
 import android.util.Log;
-import android.widget.ListAdapter;
 
 
-public abstract class Parser<T extends ListAdapter> {
+public abstract class Parser<T> {
 
-	private final T mAdapter;
-	// need a uiHandler
-	private final Handler mUiHandler;
-	private final String mNamespace;
+	private final String mDefaultNameSpace;
 
-	public Parser(Handler uiHandler, T adapter, String namespace) {
-		mAdapter = adapter;
-		mUiHandler = uiHandler;
-		mNamespace = namespace;
+	// should i support multiple listeners?
+	private OnItemParsedListener<T> mListener;
 
+	// interface that gets called when an item is added
+	public interface OnItemParsedListener<T> {
+		public void onItemParsed(T item);
+	}
+
+	public Parser(String defaultNamespace) {
+		mDefaultNameSpace = defaultNamespace;
 		setupNodes();
 	}
 
@@ -51,16 +51,20 @@ public abstract class Parser<T extends ListAdapter> {
 		}
 	}
 
-	public T getAdapter() {
-		return mAdapter;
+	public String getDefaultNamespace() {
+		return mDefaultNameSpace;
 	}
 
-	public Handler getUiHandler() {
-		return mUiHandler;
+	protected OnItemParsedListener<T> getListener() {
+		return mListener;
 	}
 
-	public String getNamespace() {
-		return mNamespace;
+	public void registerListener(OnItemParsedListener<T> listener) {
+		mListener = listener;
+	}
+
+	public void unregisterListener(OnItemParsedListener<T> listener) {
+		mListener = null;
 	}
 
 }

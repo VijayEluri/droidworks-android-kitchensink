@@ -22,6 +22,8 @@ import android.util.Log;
 
 import com.droidworks.util.AndroidUtils;
 
+// TODO, this needs lots of changes, but first and foremost it should not
+// be a singleton.
 public class AsyncDownloader {
 
 	public static int STATUS_OK = 0;

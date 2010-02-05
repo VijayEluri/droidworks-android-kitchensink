@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.client.methods.HttpGet;
 
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 public class HttpGetWorkerTest extends InstrumentationTestCase {
 
@@ -24,6 +25,7 @@ public class HttpGetWorkerTest extends InstrumentationTestCase {
 			fail();
 		}
 		catch (Exception e) {
+			Log.e("DEBUGDEBUG", "caught exception", e);
 			assertTrue(e.getCause() instanceof SocketTimeoutException);
 		}
 	}
