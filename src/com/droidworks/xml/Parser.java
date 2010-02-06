@@ -15,6 +15,7 @@ import android.util.Log;
 public abstract class Parser<T> {
 
 	private final String mDefaultNameSpace;
+	private boolean mIsFinished = false;
 
 	// should i support multiple listeners?
 	private OnItemParsedListener<T> mListener;
@@ -34,6 +35,8 @@ public abstract class Parser<T> {
 	protected abstract ContentHandler getContentHandler();
 
 	public void parse(InputStream stream) {
+		mIsFinished = false;
+
 		try {
             SAXParserFactory spf = SAXParserFactory.newInstance();
             SAXParser sp = spf.newSAXParser();
@@ -49,6 +52,8 @@ public abstract class Parser<T> {
 			Log.e(getClass().getCanonicalName(),
 					"Failure parsing document", e);
 		}
+
+		mIsFinished = true;
 	}
 
 	public String getDefaultNamespace() {
@@ -65,6 +70,15 @@ public abstract class Parser<T> {
 
 	public void unregisterListener(OnItemParsedListener<T> listener) {
 		mListener = null;
+	}
+
+	/**
+	 * Has the parser completed?
+     *
+	 * @return
+	 */
+	public boolean isFinished() {
+		return mIsFinished;
 	}
 
 }
