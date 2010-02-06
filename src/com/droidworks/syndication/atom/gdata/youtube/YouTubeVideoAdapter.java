@@ -7,10 +7,6 @@ public abstract class YouTubeVideoAdapter extends BaseAdapter {
 
 	private YouTubeFeed mFeed;
 
-	public void addItem(YouTubeItem item) {
-		throw new RuntimeException("Do not add items via the adapter");
-	}
-
 	@Override
 	public int getCount() {
 		return mFeed.getItems().size();
@@ -33,6 +29,5 @@ public abstract class YouTubeVideoAdapter extends BaseAdapter {
 	public void setFeed(YouTubeFeed feed) {
 		mFeed = feed;
 	}
-
 
 }

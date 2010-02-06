@@ -8,12 +8,13 @@ public abstract class FeedAdapter extends BaseAdapter {
 
 	private final LayoutInflater mLayoutInflater;
 
-	private Feed mFeed = new Feed();
+	private final Feed mFeed;
 
-	public FeedAdapter(Context context) {
+	public FeedAdapter(Context context, Feed feed) {
 		super();
 		mLayoutInflater = (LayoutInflater) context
 			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mFeed = feed;
 	}
 
 	// class for holding image information regarding this feed.
@@ -35,11 +36,6 @@ public abstract class FeedAdapter extends BaseAdapter {
 		}
 	}
 
-	public void addItem(FeedItem item) {
-		mFeed.getItems().add(item);
-		notifyDataSetChanged();
-	}
-
 	@Override
 	public int getCount() {
 		return mFeed.getItems().size();
@@ -57,6 +53,10 @@ public abstract class FeedAdapter extends BaseAdapter {
 
 	public LayoutInflater getLayoutInflater() {
 		return mLayoutInflater;
+	}
+
+	public Feed getFeed() {
+		return mFeed;
 	}
 
 }
