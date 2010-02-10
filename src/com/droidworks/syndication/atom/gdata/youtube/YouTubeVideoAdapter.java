@@ -1,11 +1,20 @@
 package com.droidworks.syndication.atom.gdata.youtube;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 
 
 public abstract class YouTubeVideoAdapter extends BaseAdapter {
 
-	private YouTubeFeed mFeed;
+	private final YouTubeFeed mFeed;
+	private final LayoutInflater mLayoutInflater;
+
+	public YouTubeVideoAdapter(Context context, YouTubeFeed feed) {
+		mLayoutInflater = (LayoutInflater) context
+			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mFeed = feed;
+	}
 
 	@Override
 	public int getCount() {
@@ -26,8 +35,8 @@ public abstract class YouTubeVideoAdapter extends BaseAdapter {
 		return mFeed;
 	}
 
-	public void setFeed(YouTubeFeed feed) {
-		mFeed = feed;
+	public LayoutInflater getmLayoutInflater() {
+		return mLayoutInflater;
 	}
 
 }
