@@ -35,7 +35,7 @@ public abstract class YouTubeVideoAdapter extends BaseAdapter {
 		return mFeed;
 	}
 
-	public LayoutInflater getmLayoutInflater() {
+	public LayoutInflater getLayoutInflater() {
 		return mLayoutInflater;
 	}
 
