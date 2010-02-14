@@ -1,4 +1,4 @@
-package com.droidworks.http;
+package com.droidworks.http.download;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,6 +20,8 @@ import org.apache.http.client.methods.HttpGet;
 import android.os.Environment;
 import android.util.Log;
 
+import com.droidworks.http.HttpGetWorker;
+import com.droidworks.http.download.DownloadTask.DownloadCompletedListener;
 import com.droidworks.util.AndroidUtils;
 
 // TODO, this needs lots of changes, but first and foremost it should not
@@ -154,6 +156,7 @@ public class AsyncDownloader {
 		private void writeFile(InputStream is) {
 			if (!AndroidUtils.hasStorage(true)) {
 				_resultCode = STATUS_NO_STORAGE;
+				return;
 			}
 
 	        String directoryName = Environment
@@ -246,6 +249,8 @@ public class AsyncDownloader {
 						}
 					}
 
+					// TODO, this probaby won't work either, need to modify
+					// for flexability.
 					// notify listeners
 					for (DownloadCompletedListener l : task.getListeners()) {
 						l.onDownloadComplete(_outputFile, _resultCode);
@@ -256,44 +261,6 @@ public class AsyncDownloader {
 				}
 			}
 		}
-	}
-
-
-	public static class DownloadTask {
-
-		private final String mUrl;
-		private int mTimeOut = 10;  // default to a 10 second connection timeout
-
-		private final ArrayList<DownloadCompletedListener> mListeners
-			= new ArrayList<DownloadCompletedListener>();
-
-		public void setTimeout(int seconds) {
-			mTimeOut = seconds;
-		}
-
-		public int getTimeout() {
-			return mTimeOut;
-		}
-
-		public DownloadTask(String url) {
-			mUrl = url;
-		}
-
-		public void addListener(DownloadCompletedListener listener) {
-			mListeners.add(listener);
-		}
-
-		public String getUrl() {
-			return mUrl;
-		}
-
-		public ArrayList<DownloadCompletedListener> getListeners() {
-			return mListeners;
-		}
-	}
-
-	public interface DownloadCompletedListener {
-		public void onDownloadComplete(String path, int resultCode);
 	}
 
 }
