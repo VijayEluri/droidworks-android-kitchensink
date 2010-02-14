@@ -2,8 +2,9 @@ package com.droidworks.http;
 
 import android.test.InstrumentationTestCase;
 
-import com.droidworks.http.AsyncDownloader.DownloadCompletedListener;
-import com.droidworks.http.AsyncDownloader.DownloadTask;
+import com.droidworks.http.download.AsyncDownloader;
+import com.droidworks.http.download.WritableStorageDownloadTask;
+import com.droidworks.http.download.DownloadTask.DownloadCompletedListener;
 
 public class AsyncDownloaderTest extends InstrumentationTestCase {
 
@@ -23,11 +24,11 @@ public class AsyncDownloaderTest extends InstrumentationTestCase {
 		AsyncDownloader downloader = AsyncDownloader.getDownloader();
 		downloader.setPollingDuration(1);
 		// create a task that should never complete
-		DownloadTask task = new DownloadTask("http://www.google.com:8234/test/1/");
+		WritableStorageDownloadTask task = new WritableStorageDownloadTask("http://www.google.com:8234/test/1/");
 		// set a long timeout value
 		task.setTimeout(20);
 		// create a task that should never complete
-		DownloadTask task2 = new DownloadTask("http://www.google.com:8234/test/2");
+		WritableStorageDownloadTask task2 = new WritableStorageDownloadTask("http://www.google.com:8234/test/2");
 		// set a long timeout value
 		task2.setTimeout(20);
 		downloader.addDownloadTask(task);
@@ -51,9 +52,9 @@ public class AsyncDownloaderTest extends InstrumentationTestCase {
     public void testNullUrlTask() throws Exception {
     	AsyncDownloader downloader = AsyncDownloader.getDownloader();
 		downloader.setPollingDuration(1);
-		DownloadTask task = new DownloadTask(null);
+		WritableStorageDownloadTask task = new WritableStorageDownloadTask(null);
 
-		task.addListener(new DownloadCompletedListener() {
+		task.addListener(new DownloadCompletedListener<String>() {
 			public void onDownloadComplete(String path, int resultCode) {
 				mJobCompleted = true;
 			}
@@ -73,9 +74,9 @@ public class AsyncDownloaderTest extends InstrumentationTestCase {
     public void testActualDownload() {
     	AsyncDownloader downloader = AsyncDownloader.getDownloader();
 		downloader.setPollingDuration(1);
-    	DownloadTask task = new DownloadTask(TEST_DL_URL);
+    	WritableStorageDownloadTask task = new WritableStorageDownloadTask(TEST_DL_URL);
 
-		task.addListener(new DownloadCompletedListener() {
+		task.addListener(new DownloadCompletedListener<String>() {
 			public void onDownloadComplete(String path, int resultCode) {
 				mJobCompleted = true;
 				mOutputFile = path;
