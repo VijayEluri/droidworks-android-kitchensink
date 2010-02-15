@@ -64,7 +64,7 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 
 		thumbnailNode.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attrs) {
-				if (attrs.getValue("url").contains("0.jpg"))
+				if (attrs.getValue("url").contains("1.jpg"))
 					mThumbnailUrl = attrs.getValue("url");
 			}
 		});
@@ -117,7 +117,7 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 						mTitle, mDescription, mYouTubeUrl,
 						mDuration, mThumbnailUrl, parseId(mYouTubeUrl));
 
-				// always add an item to the feed
+				// always add item to the feed
 				mFeed.addItem(item);
 
 				// notify a listener if there is one.
