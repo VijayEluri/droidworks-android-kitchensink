@@ -13,7 +13,7 @@ import android.util.Log;
  */
 public class BitmapDownloadTask extends DownloadTask<Bitmap>{
 
-	private boolean mIsCancelled;
+	private boolean mIsCancelled = false;
 	private Bitmap mBitmap;
 
 	public BitmapDownloadTask(String url) {
@@ -48,4 +48,7 @@ public class BitmapDownloadTask extends DownloadTask<Bitmap>{
 		return DownloadTask.STATUS_GENERAL_ERROR;
 	}
 
+	public static abstract class BitmapDownloadCompletedListener implements DownloadCompletedListener<Bitmap> {
+
+	}
 }
