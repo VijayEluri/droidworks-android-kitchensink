@@ -65,7 +65,7 @@ public class AsyncDownloader {
 		return count;
 	}
 
-	public synchronized void addDownloadTask(DownloadTask task) {
+	public synchronized void addDownloadTask(DownloadTask<?> task) {
 		mTasks.add(task);
 
 		// if no threads are running then we always start a thread
@@ -139,70 +139,31 @@ public class AsyncDownloader {
 			}
 		}
 
-//		private void writeFile(InputStream is) {
-//			if (!AndroidUtils.hasStorage(true)) {
-//				_resultCode = STATUS_NO_STORAGE;
-//				return;
-//			}
-//
-//	        String directoryName = Environment
-//        	.	getExternalStorageDirectory().toString() + "/tmp";
-//
-//	        File directory = new File(directoryName);
-//
-//	        if (!directory.isDirectory()) {
-//	            if (!directory.mkdirs()) {
-//	            	Log.e(LOG_LABEL, "can't create directory: " + directoryName);
-//					_resultCode = STATUS_FILE_WRITE_ERROR;
-//					return;
-//	            }
-//	        }
-//	        try {
-//				File tmpFile = File.createTempFile("ad_", null, directory);
-//				FileOutputStream os = new FileOutputStream(tmpFile);
-//				byte[] data = new byte[512];
-//				int bytesRead = 0;
-//				while ((bytesRead = is.read(data)) != -1) {
-//					os.write(data, 0, bytesRead);
-//
-//					if (_shutdown) {
-//						_resultCode = STATUS_CANCELLED;
-//						return;
-//					}
-//				}
-//
-//				_resultCode = STATUS_OK;
-//				is.close();
-//			}
-//	        catch (IOException e) {
-//				Log.e(LOG_LABEL, "Exception creating temp file", e);
-//				_resultCode = STATUS_FILE_WRITE_ERROR;
-//				return;
-//	        }
-//		}
-
 		@Override
 		public void run() {
+			android.os.Process.setThreadPriority(
+					android.os.Process.THREAD_PRIORITY_LOWEST);
+
 			while (!_shutdown) {
 
-				DownloadTask<?> streamHandler;
+				DownloadTask<?> task;
 
 				// grab a task
 				try {
 					synchronized (mDownloader) {
 						_resultCode = -1;
-						streamHandler = mTasks.poll(mPollDuration, TimeUnit.SECONDS);
+						task = mTasks.poll(mPollDuration, TimeUnit.SECONDS);
 
 						// shutdown on a null task
-						if (streamHandler == null || _shutdown) {
+						if (task == null || _shutdown) {
 							_shutdown = true;
 							return;
 						}
 
 						// if we have a valid task, init a worker
-						if (streamHandler.getUrl() != null) {
-							HttpGet get = new HttpGet(streamHandler.getUrl());
-							_worker = new HttpGetWorker(get, null, streamHandler.getTimeout());
+						if (task.getUrl() != null) {
+							HttpGet get = new HttpGet(task.getUrl());
+							_worker = new HttpGetWorker(get, null, task.getTimeout());
 						}
 					}
 
@@ -212,7 +173,7 @@ public class AsyncDownloader {
 							HttpResponse response = mExecutor.submit(_worker)
 								.get(mDownloadCompleteTimeout, TimeUnit.SECONDS);
 
-							_resultCode = streamHandler.processStream(
+							_resultCode = task.processStream(
 									response.getEntity().getContent());
 						}
 						catch (ExecutionException e) {
@@ -220,23 +181,23 @@ public class AsyncDownloader {
 								_resultCode = DownloadTask.STATUS_TIMED_OUT;
 							}
 							// cancelled tasks are receiving an EE
-							Log.e(LOG_LABEL, "Caught execution exception on task: " + streamHandler.getUrl(), e );
+							Log.e(LOG_LABEL, "Caught execution exception on task: " + task.getUrl(), e );
 						} catch (TimeoutException e) {
 							_resultCode = DownloadTask.STATUS_TIMED_OUT;
-							Log.e(LOG_LABEL, "Caught timeout exception task: " + streamHandler.getUrl(), e );
+							Log.e(LOG_LABEL, "Caught timeout exception task: " + task.getUrl(), e );
 						} catch (IllegalStateException e) {
 							_resultCode = DownloadTask.STATUS_GENERAL_ERROR;
-							Log.e(LOG_LABEL, "Caught exception: " + streamHandler.getUrl(), e );
+							Log.e(LOG_LABEL, "Caught exception: " + task.getUrl(), e );
 						} catch (IOException e) {
 							_resultCode = DownloadTask.STATUS_GENERAL_ERROR;
-							Log.e(LOG_LABEL, "Caught exception: " + streamHandler.getUrl(), e );
+							Log.e(LOG_LABEL, "Caught exception: " + task.getUrl(), e );
 						}
 					}
 
 					// TODO, this probaby won't work either, need to modify
 					// for flexability.
 					// notify listeners
-					streamHandler.notifyListeners(_resultCode);
+					task.notifyListeners(_resultCode);
 				}
 				catch (InterruptedException ignored) {
 					_shutdown = true;
