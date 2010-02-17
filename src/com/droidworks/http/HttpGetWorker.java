@@ -12,14 +12,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.util.Log;
-
 /**
  * @author Jason Hudgins <jasonleehudgins@gmail.com>
  */
 public class HttpGetWorker implements Callable<HttpResponse> {
-
-    private static final String LOG_LABEL = "HttpGetWorker";
 
 	private final HttpGet mMethod;
     private final Set<Integer> mAccecptedHttpStatusCodes;
@@ -52,9 +48,7 @@ public class HttpGetWorker implements Callable<HttpResponse> {
     public HttpResponse call() throws HttpException, ClientProtocolException,
     		IOException {
 
-    	Log.d(LOG_LABEL, "HttpGetWorker executing method: " + mMethod.getURI());
         HttpResponse response = mClient.execute(mMethod);
-    	Log.d(LOG_LABEL, "HttpGetWorker finished executing " + mMethod.getURI());
 
         int code = response.getStatusLine().getStatusCode();
 
@@ -72,7 +66,6 @@ public class HttpGetWorker implements Callable<HttpResponse> {
     }
 
     public void cancel() {
-    	Log.d(LOG_LABEL, "HttpGetWorker is aborting");
     	mMethod.abort();
     }
 }
