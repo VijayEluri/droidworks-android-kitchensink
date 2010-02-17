@@ -12,14 +12,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
 import android.util.Log;
 
 import com.droidworks.http.HttpGetWorker;
+import com.droidworks.http.HttpUtils;
 
-// TODO, this needs lots of changes, but first and foremost it should not
-// be a singleton.
+// TODO: this thing is a piece of crap, we need to create an interface
+// and then rebuild something that works better..
 public class AsyncDownloader {
 
 	public static final AsyncDownloader mDownloader = new AsyncDownloader();
@@ -56,7 +58,7 @@ public class AsyncDownloader {
 	 *
 	 * @return
 	 */
-	public synchronized int getThreadCount() {
+	public int getThreadCount() {
 		int count = 0;
 		for (DownloadLooper l : mLoopers) {
 			if (l.getState() != Thread.State.TERMINATED)
@@ -65,7 +67,15 @@ public class AsyncDownloader {
 		return count;
 	}
 
-	public synchronized void addDownloadTask(DownloadTask<?> task) {
+	public boolean isQueued(DownloadTask<?> task) {
+
+		if (mTasks.contains(task))
+			return true;
+
+		return false;
+	}
+
+	public void addDownloadTask(DownloadTask<?> task) {
 		mTasks.add(task);
 
 		// if no threads are running then we always start a thread
@@ -125,6 +135,9 @@ public class AsyncDownloader {
 		private boolean _shutdown = false;
 		private HttpGetWorker _worker;
 
+		private final HttpClient _client
+			= HttpUtils.getThreadSafeClient();
+
 		private int _resultCode;
 
 		public DownloadLooper(String name) {
@@ -163,7 +176,12 @@ public class AsyncDownloader {
 						// if we have a valid task, init a worker
 						if (task.getUrl() != null) {
 							HttpGet get = new HttpGet(task.getUrl());
-							_worker = new HttpGetWorker(get, null, task.getTimeout());
+
+							// TODO, resetting the timeout each time is kind of lame
+							// it makes more sense for the task's all to have the
+							// same timeout value..
+							HttpUtils.setConnectionTimeout(_client, task.getTimeout());
+							_worker = new HttpGetWorker(get, null, _client);
 						}
 					}
 
@@ -194,9 +212,6 @@ public class AsyncDownloader {
 						}
 					}
 
-					// TODO, this probaby won't work either, need to modify
-					// for flexability.
-					// notify listeners
 					task.notifyListeners(_resultCode);
 				}
 				catch (InterruptedException ignored) {

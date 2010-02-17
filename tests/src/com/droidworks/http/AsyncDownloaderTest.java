@@ -94,7 +94,8 @@ public class AsyncDownloaderTest extends InstrumentationTestCase {
 		if (!mJobCompleted)
 			fail("Job wasn't completed?");
 
-		assertTrue(mOutputFile.contains("/sdcard/tmp/ad_"));
 		assertEquals(0, mResultCode);
+		assertNotNull(mOutputFile);
+		assertTrue(mOutputFile.contains("/sdcard/tmp/ad_"));
     }
 }
