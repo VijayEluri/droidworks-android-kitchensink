@@ -3,9 +3,7 @@ package com.droidworks.http.download;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-// TODO:
-// think and think hard, does a download task and a stream handler need
-// to be seperate?  i'm really thinking not now..
+import android.util.Log;
 
 public abstract class DownloadTask<T> {
 
@@ -46,9 +44,6 @@ public abstract class DownloadTask<T> {
 		return mListeners;
 	}
 
-	// TODO: this only works with the sdcard, we need something else
-	// that's a bit more flexable.  the name is correct, but the Path
-	// thing is kind of lame, can this be genericized?
 	public interface DownloadCompletedListener<T> {
 		public void onDownloadComplete(T output, int resultCode);
 	}
@@ -58,6 +53,17 @@ public abstract class DownloadTask<T> {
 			l.onDownloadComplete(getOutput(), resultCode);
 		}
 
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof DownloadTask<?>))
+				return false;
+
+		if (((DownloadTask<?>) obj).getUrl().equals(mUrl))
+			return true;
+
+		return false;
 	}
 
 	abstract public int processStream(InputStream stream);
