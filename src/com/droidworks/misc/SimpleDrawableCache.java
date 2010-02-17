@@ -12,4 +12,10 @@ public class SimpleDrawableCache extends LruCache<String, Drawable> {
 
         super.put(key, value);
     }
+
+	public synchronized boolean containsKey(String key) {
+		return super.contains(key);
+	}
+
+
 }
