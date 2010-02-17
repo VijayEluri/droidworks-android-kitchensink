@@ -3,8 +3,6 @@ package com.droidworks.http.download;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import android.util.Log;
-
 public abstract class DownloadTask<T> {
 
 	public static int STATUS_OK = 0;
