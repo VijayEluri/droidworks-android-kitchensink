@@ -33,7 +33,7 @@ public class YouTubeVideoFeedParserTest extends InstrumentationTestCase {
 		assertEquals("http://www.youtube.com/watch?v=HcyY4iAX-AI&feature=youtube_gdata",
 			item.getYouTubeUrl());
 		assertEquals(158, item.getDuration());
-		assertEquals("http://i.ytimg.com/vi/HcyY4iAX-AI/0.jpg", item.getThumbnailUrl());
+		assertEquals("http://i.ytimg.com/vi/HcyY4iAX-AI/0.jpg", item.getLargeThumbnailUrl());
 		assertEquals("HcyY4iAX-AI", item.getYouTubeId());
 	}
 
