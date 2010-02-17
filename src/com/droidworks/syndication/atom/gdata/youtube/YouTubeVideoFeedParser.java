@@ -14,6 +14,7 @@ import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
+import android.util.Log;
 
 import com.droidworks.xml.Parser;
 
@@ -29,7 +30,8 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 	private String mDescription;
 	private String mYouTubeUrl;
 	private long mDuration;
-	private String mThumbnailUrl;
+	private String mSmallThumbnailUrl;
+	private String mLargeThumbnailUrl;
 
 	private final YouTubeFeed mFeed = new YouTubeFeed();
 
@@ -64,8 +66,10 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 
 		thumbnailNode.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attrs) {
-				if (attrs.getValue("url").contains("1.jpg"))
-					mThumbnailUrl = attrs.getValue("url");
+				if (attrs.getValue("url").contains("0.jpg"))
+					mLargeThumbnailUrl = attrs.getValue("url");
+				else if (attrs.getValue("url").contains("1.jpg"))
+					mSmallThumbnailUrl = attrs.getValue("url");
 			}
 		});
 
@@ -105,8 +109,8 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 					 String time = body.replace("Z", "-0000");
 					mDatePublished = df.parse(time);
 				}
-				 catch (ParseException e) {
-					e.printStackTrace();
+				catch (ParseException e) {
+					Log.e(getClass().getCanonicalName(), "time parse error", e);
 				}
 			}
 		});
@@ -115,7 +119,8 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 			public void end() {
 				final YouTubeItem item = new YouTubeItem(mDatePublished,
 						mTitle, mDescription, mYouTubeUrl,
-						mDuration, mThumbnailUrl, parseId(mYouTubeUrl));
+						mDuration, mSmallThumbnailUrl, mLargeThumbnailUrl,
+						parseId(mYouTubeUrl));
 
 				// always add item to the feed
 				mFeed.addItem(item);

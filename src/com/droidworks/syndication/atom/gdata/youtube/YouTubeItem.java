@@ -9,19 +9,21 @@ public class YouTubeItem {
 	private final String mDescription;
 	private final String mYouTubeUrl;
 	private final long mDuration;
-	private final String mThumbnailUrl;
 	private final String mYouTubeId;
+	private final String mSmallThumbUrl;
+	private final String mLargeThumbUrl;
 
 	public YouTubeItem(Date datePublished, String title, String description,
-			String youtubeUrl, long duration, String thumbnailUrl,
-			String youtubeId) {
+			String youtubeUrl, long duration, String smallThumbUrl,
+			String largeThumbUrl, String youtubeId) {
 
 		mDatePublished = datePublished;
 		mTitle = title;
 		mDescription = description;
 		mYouTubeUrl = youtubeUrl;
 		mDuration = duration;
-		mThumbnailUrl = thumbnailUrl;
+		mSmallThumbUrl = smallThumbUrl;
+		mLargeThumbUrl = largeThumbUrl;
 		mYouTubeId = youtubeId;
 	}
 
@@ -45,8 +47,12 @@ public class YouTubeItem {
 		return mDuration;
 	}
 
-	public String getThumbnailUrl() {
-		return mThumbnailUrl;
+	public String getSmallThumbnailUrl() {
+		return mSmallThumbUrl;
+	}
+
+	public String getLargeThumbnailUrl() {
+		return mLargeThumbUrl;
 	}
 
 	public String getYouTubeId() {
