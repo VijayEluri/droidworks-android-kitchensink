@@ -21,7 +21,7 @@ public class AsyncDownloaderTest extends InstrumentationTestCase {
 	}
 
 	public void testCancelAllTasks() throws Exception {
-		AsyncDownloader downloader = AsyncDownloader.getDownloader();
+		AsyncDownloader downloader = new AsyncDownloader();
 		downloader.setPollingDuration(1);
 		// create a task that should never complete
 		WritableStorageDownloadTask task = new WritableStorageDownloadTask("http://www.google.com:8234/test/1/");
@@ -50,7 +50,7 @@ public class AsyncDownloaderTest extends InstrumentationTestCase {
 	}
 
     public void testNullUrlTask() throws Exception {
-    	AsyncDownloader downloader = AsyncDownloader.getDownloader();
+    	AsyncDownloader downloader = new AsyncDownloader();
 		downloader.setPollingDuration(1);
 		WritableStorageDownloadTask task = new WritableStorageDownloadTask(null);
 
@@ -72,7 +72,7 @@ public class AsyncDownloaderTest extends InstrumentationTestCase {
     }
 
     public void testActualDownload() {
-    	AsyncDownloader downloader = AsyncDownloader.getDownloader();
+    	AsyncDownloader downloader = new AsyncDownloader();
 		downloader.setPollingDuration(1);
     	WritableStorageDownloadTask task = new WritableStorageDownloadTask(TEST_DL_URL);
 

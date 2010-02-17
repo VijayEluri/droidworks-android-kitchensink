@@ -24,8 +24,6 @@ import com.droidworks.http.HttpUtils;
 // and then rebuild something that works better..
 public class AsyncDownloader {
 
-	public static final AsyncDownloader mDownloader = new AsyncDownloader();
-
 	public static final String LOG_LABEL = "AsyncDownloader";
 
 	private LinkedBlockingQueue<DownloadTask<?>> mTasks
@@ -110,7 +108,7 @@ public class AsyncDownloader {
 		mLoopers.add(looper);
 	}
 
-	public synchronized void cancelAll() {
+	public void cancelAll() {
 		for (DownloadLooper l : mLoopers) {
 			l.cancel();
 			l.interrupt();
@@ -122,12 +120,8 @@ public class AsyncDownloader {
 	}
 
 	// private to prevent instantiation
-	private AsyncDownloader() {
+	public AsyncDownloader() {
 		mExecutor = Executors.newCachedThreadPool();
-	}
-
-	public static AsyncDownloader getDownloader() {
-		return mDownloader;
 	}
 
 	class DownloadLooper extends Thread {
@@ -163,7 +157,7 @@ public class AsyncDownloader {
 
 				// grab a task
 				try {
-					synchronized (mDownloader) {
+					synchronized (AsyncDownloader.this) {
 						_resultCode = -1;
 						task = mTasks.poll(mPollDuration, TimeUnit.SECONDS);
 
