@@ -100,7 +100,7 @@ public class StringUtils {
 	  // just a simple method to transform values like 4 to 04, but
 	  // values like 14 will come back as 14.
 	  public static String addLeadingZero(long value) {
-		  if (value <= 10)
+		  if (value < 10)
 			  return "0" + Long.toString(value);
 
 		  return Long.toString(value);

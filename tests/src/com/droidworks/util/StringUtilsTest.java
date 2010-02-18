@@ -9,7 +9,10 @@ public class StringUtilsTest extends InstrumentationTestCase {
 	}
 
 	public void testFormatHMS() {
-		String result = StringUtils.formatHMS(186);
+		String result = StringUtils.formatHMS(370);
+		assertEquals("6:10", result);
+
+		result = StringUtils.formatHMS(186);
 		assertEquals("3:06", result);
 
 		result = StringUtils.formatHMS(15);
