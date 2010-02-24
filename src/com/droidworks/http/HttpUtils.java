@@ -15,15 +15,10 @@ public class HttpUtils {
 	public static final int TIMEOUT_READ_LONG = 20000;
 	public static final int TIMEOUT_READ = 15000;
 
-	public static DefaultHttpClient client;
-
 	// this method returns a threadsafe httpClient
-	public synchronized static DefaultHttpClient getThreadSafeClient() {
+	public static DefaultHttpClient getThreadSafeClient() {
 
-        if (client != null)
-        	return client;
-
-        client = new DefaultHttpClient();
+		DefaultHttpClient client = new DefaultHttpClient();
 
         ClientConnectionManager mgr = client.getConnectionManager();
 
