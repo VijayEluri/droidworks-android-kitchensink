@@ -13,16 +13,10 @@ import android.util.Log;
  */
 public class BitmapDownloadTask extends DownloadTask<Bitmap>{
 
-	private boolean mIsCancelled = false;
 	private Bitmap mBitmap;
 
 	public BitmapDownloadTask(String url) {
 		super(url);
-	}
-
-	@Override
-	public void cancel() {
-		mIsCancelled = true;
 	}
 
 	@Override
@@ -31,24 +25,27 @@ public class BitmapDownloadTask extends DownloadTask<Bitmap>{
 	}
 
 	@Override
-	public int processStream(InputStream stream) {
+	public void processStream(InputStream stream) {
 
-		if (mIsCancelled)
-			return DownloadTask.STATUS_CANCELLED;
+		if (Thread.interrupted()) {
+			setStatus(DownloadTask.STATUS_CANCELLED);
+			return;
+		}
 
 		try {
 			mBitmap = BitmapFactory.decodeStream(stream);
-			return DownloadTask.STATUS_OK;
+			setStatus(DownloadTask.STATUS_OK);
+			return;
 		}
 		catch (Exception e) {
 			Log.e(getClass().getCanonicalName(),
 					"Exception occurred downloading bitmap", e);
 		}
 
-		return DownloadTask.STATUS_GENERAL_ERROR;
+		setStatus(DownloadTask.STATUS_GENERAL_ERROR);
 	}
 
-	public static abstract class BitmapDownloadCompletedListener implements DownloadCompletedListener<Bitmap> {
+	public static abstract class BitmapDownloadCompletedListener
+		implements DownloadCompletedListener<Bitmap> { }
 
-	}
 }

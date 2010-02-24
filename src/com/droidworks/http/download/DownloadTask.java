@@ -3,8 +3,11 @@ package com.droidworks.http.download;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+// TODO: instead of cancel, these things needs to respond to interrupts
+// that set the cancel flag..
 public abstract class DownloadTask<T> {
 
+	public static int STATUS_UNPROCESSED = -1;
 	public static int STATUS_OK = 0;
 	public static int STATUS_TIMED_OUT = 1;
 	public static int STATUS_NO_STORAGE = 2;
@@ -15,13 +18,17 @@ public abstract class DownloadTask<T> {
 	private final String mUrl;
 	private int mTimeOut = 10;  // default to a 10 second connection timeout
 
+	private int mStatus = -1;
+
 	private final ArrayList<DownloadCompletedListener<T>> mListeners
 		= new ArrayList<DownloadCompletedListener<T>>();
 
+	@Deprecated
 	public void setTimeout(int seconds) {
 		mTimeOut = seconds;
 	}
 
+	@Deprecated
 	public int getTimeout() {
 		return mTimeOut;
 	}
@@ -46,11 +53,10 @@ public abstract class DownloadTask<T> {
 		public void onDownloadComplete(T output, int resultCode);
 	}
 
-	public void notifyListeners(int resultCode) {
+	public void notifyListeners() {
 		for (DownloadCompletedListener<T> l : getListeners()) {
-			l.onDownloadComplete(getOutput(), resultCode);
+			l.onDownloadComplete(getOutput(), getStatus());
 		}
-
 	}
 
 	@Override
@@ -64,10 +70,16 @@ public abstract class DownloadTask<T> {
 		return false;
 	}
 
-	abstract public int processStream(InputStream stream);
+	abstract public void processStream(InputStream stream);
 
 	abstract public T getOutput();
 
-	abstract public void cancel();
+	public int getStatus() {
+		return mStatus;
+	}
+
+	public void setStatus(int status) {
+		mStatus = status;
+	}
 
 }

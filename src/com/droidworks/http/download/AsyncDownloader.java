@@ -22,7 +22,7 @@ import com.droidworks.http.HttpUtils;
 
 // TODO: this thing is a piece of crap, we need to create an interface
 // and then rebuild something that works better..
-public class AsyncDownloader {
+public class AsyncDownloader implements DownloadManager {
 
 	public static final String LOG_LABEL = "AsyncDownloader";
 
@@ -40,21 +40,15 @@ public class AsyncDownloader {
 
 	private ExecutorService mExecutor;
 
-	/**
-	 * The number of seconds a thread will wait for a new task before
-	 * shutting itself down.  You probably don't want to change this
-	 * under normal conditions.
-	 *
-	 * @param seconds
+	/* (non-Javadoc)
+	 * @see com.droidworks.http.download.DownloadManager#setPollingDuration(int)
 	 */
 	public synchronized void setPollingDuration(int seconds) {
 		mPollDuration = seconds;
 	}
 
-	/**
-	 * Returns the number of active download threads.
-	 *
-	 * @return
+	/* (non-Javadoc)
+	 * @see com.droidworks.http.download.DownloadManager#getThreadCount()
 	 */
 	public int getThreadCount() {
 		int count = 0;
@@ -65,6 +59,9 @@ public class AsyncDownloader {
 		return count;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.droidworks.http.download.DownloadManager#isQueued(com.droidworks.http.download.DownloadTask)
+	 */
 	public boolean isQueued(DownloadTask<?> task) {
 
 		if (mTasks.contains(task))
@@ -73,6 +70,9 @@ public class AsyncDownloader {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.droidworks.http.download.DownloadManager#addDownloadTask(com.droidworks.http.download.DownloadTask)
+	 */
 	public void addDownloadTask(DownloadTask<?> task) {
 		mTasks.add(task);
 
@@ -108,6 +108,9 @@ public class AsyncDownloader {
 		mLoopers.add(looper);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.droidworks.http.download.DownloadManager#cancelAll()
+	 */
 	public void cancelAll() {
 		for (DownloadLooper l : mLoopers) {
 			l.cancel();
@@ -115,6 +118,9 @@ public class AsyncDownloader {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.droidworks.http.download.DownloadManager#setMaxThreads(int)
+	 */
 	public synchronized void setMaxThreads(int count) {
 		mMaxThreads = count;
 	}
@@ -185,8 +191,7 @@ public class AsyncDownloader {
 							HttpResponse response = mExecutor.submit(_worker)
 								.get(mDownloadCompleteTimeout, TimeUnit.SECONDS);
 
-							_resultCode = task.processStream(
-									response.getEntity().getContent());
+							task.processStream(response.getEntity().getContent());
 						}
 						catch (ExecutionException e) {
 							if (e.getCause() instanceof SocketTimeoutException) {
@@ -206,13 +211,18 @@ public class AsyncDownloader {
 						}
 					}
 
-					task.notifyListeners(_resultCode);
+					task.notifyListeners();
 				}
 				catch (InterruptedException ignored) {
 					_shutdown = true;
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setTaskTimeout(int seconds) {
+		// ignored
 	}
 
 }

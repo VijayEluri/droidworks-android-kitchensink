@@ -24,7 +24,6 @@ public class WritableStorageDownloadTask extends DownloadTask<String> {
 		super(url);
 	}
 
-	private boolean mIsCancelled = false;
 	private String mOutputFilePath =  null;
 
 	@Override
@@ -33,10 +32,11 @@ public class WritableStorageDownloadTask extends DownloadTask<String> {
 	}
 
 	@Override
-	public int processStream(InputStream is) {
+	public void processStream(InputStream is) {
 
 		if (!AndroidUtils.hasStorage(true)) {
-			return STATUS_NO_STORAGE;
+			setStatus(STATUS_NO_STORAGE);
+			return;
 		}
 
         String directoryName = Environment
@@ -48,7 +48,8 @@ public class WritableStorageDownloadTask extends DownloadTask<String> {
             if (!directory.mkdirs()) {
             	Log.e(getClass().getCanonicalName(),
             			"can't create directory: " + directoryName);
-				return STATUS_FILE_WRITE_ERROR;
+            	setStatus(STATUS_FILE_WRITE_ERROR);
+				return;
             }
         }
         try {
@@ -59,26 +60,24 @@ public class WritableStorageDownloadTask extends DownloadTask<String> {
 			while ((bytesRead = is.read(data)) != -1) {
 				os.write(data, 0, bytesRead);
 
-				if (mIsCancelled) {
-					return STATUS_CANCELLED;
+				if (Thread.interrupted()) {
+					setStatus(STATUS_CANCELLED);
+					return;
 				}
 			}
 
 			// if we get here we suceeeded
 			mOutputFilePath = tmpFile.getAbsolutePath();
 			is.close();
-			return STATUS_OK;
+			setStatus(STATUS_OK);
+			return;
 		}
         catch (IOException e) {
 			Log.e(getClass().getCanonicalName(),
 					"Exception creating temp file", e);
-			return STATUS_FILE_WRITE_ERROR;
+			setStatus(STATUS_FILE_WRITE_ERROR);
+			return;
         }
-	}
-
-	@Override
-	public void cancel() {
-		mIsCancelled = true;
 	}
 
 }
