@@ -20,8 +20,7 @@ import android.util.Log;
 import com.droidworks.http.HttpGetWorker;
 import com.droidworks.http.HttpUtils;
 
-// TODO: this thing is a piece of crap, we need to create an interface
-// and then rebuild something that works better..
+@Deprecated
 public class AsyncDownloader implements DownloadManager {
 
 	public static final String LOG_LABEL = "AsyncDownloader";
@@ -177,7 +176,7 @@ public class AsyncDownloader implements DownloadManager {
 						if (task.getUrl() != null) {
 							HttpGet get = new HttpGet(task.getUrl());
 
-							// TODO, resetting the timeout each time is kind of lame
+							// resetting the timeout each time is kind of lame
 							// it makes more sense for the task's all to have the
 							// same timeout value..
 							HttpUtils.setConnectionTimeout(_client, task.getTimeout());
