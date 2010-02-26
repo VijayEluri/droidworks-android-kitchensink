@@ -27,7 +27,11 @@ public class ConcurrentDownloadManager implements DownloadManager {
 		= new HashSet<String>();
 
 	public ConcurrentDownloadManager() {
-		mThreadPool = new ThreadPoolExecutor(0, 6, 10, TimeUnit.SECONDS,
+		// TODO, i need to implement a thread factory so threads have
+		// their priority set correctly..
+		// 		android.os.Process.setThreadPriority(
+		//   android.os.Process.THREAD_PRIORITY_LOWEST);
+		mThreadPool = new ThreadPoolExecutor(3, 6, 10, TimeUnit.SECONDS,
 				mWorkQueue);
 		mClient = HttpUtils.getThreadSafeClient();
 	}
@@ -47,6 +51,7 @@ public class ConcurrentDownloadManager implements DownloadManager {
 		}
 
 		public void run() {
+
 			try {
 				HttpResponse response = mClient.execute(new HttpGet(mTask.getUrl()));
 				mTask.processStream(response.getEntity().getContent());
