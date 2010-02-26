@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtils {
 
@@ -147,6 +149,22 @@ public class StringUtils {
 			seconds = "0" + seconds;
 
 		return minutes + ":" + seconds;
+	}
+
+	/**
+	 * Method to santize a path segment for a fat32 filesystem.  Replaces
+	 * illegal characters with the supplied replacement character (which
+	 * must be safe as well).
+	 *
+	 * @param segment
+	 * @param replace
+	 * @return
+	 */
+	public static String sanitizeFat32(String segment, String replace) {
+		String evilChars = "\\\\|/|:|;|\\*|\\?|\"|<|>|\\|";
+		Pattern pattern = Pattern.compile(evilChars);
+		Matcher matcher = pattern.matcher(segment);
+		return matcher.replaceAll(replace);
 	}
 
 }
