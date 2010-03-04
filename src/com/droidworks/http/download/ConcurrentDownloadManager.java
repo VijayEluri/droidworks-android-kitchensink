@@ -17,9 +17,6 @@ public class ConcurrentDownloadManager implements DownloadManager {
 
 	private final ThreadPoolExecutor mThreadPool;
 
-	// TODO, do i need a reference to this?
-	private final LinkedBlockingQueue<Runnable> mWorkQueue
-		= new LinkedBlockingQueue<Runnable>();
 	private final DefaultHttpClient mClient;
 
 	// quick and dirty hack to tell us if an item has been q'd or not.
@@ -27,12 +24,11 @@ public class ConcurrentDownloadManager implements DownloadManager {
 		= new HashSet<String>();
 
 	public ConcurrentDownloadManager() {
-		// TODO, i need to implement a thread factory so threads have
-		// their priority set correctly..
-		// 		android.os.Process.setThreadPriority(
-		//   android.os.Process.THREAD_PRIORITY_LOWEST);
 		mThreadPool = new ThreadPoolExecutor(3, 6, 10, TimeUnit.SECONDS,
-				mWorkQueue);
+				new LinkedBlockingQueue<Runnable>(),
+				new AndroidThreadFactory(
+						android.os.Process.THREAD_PRIORITY_LOWEST));
+
 		mClient = HttpUtils.getThreadSafeClient();
 	}
 
