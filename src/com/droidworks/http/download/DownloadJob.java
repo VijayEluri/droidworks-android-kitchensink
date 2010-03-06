@@ -14,6 +14,7 @@ public class DownloadJob implements Serializable, Parcelable {
 		public static final int ERROR = -1;
 		// the default state
 		public static final int INITIALIZED = 0;
+		// duh
 		public static final int COMPLETED = 1;
 		// currentlyb eing downloaded
 		public static final int ACTIVE = 2;
@@ -28,22 +29,28 @@ public class DownloadJob implements Serializable, Parcelable {
 	public static class BlockedState {
 		public static final int NOT_BLOCKED = 0;
 		public static final int WAITING_WIFI = 1;
-		public static final int GENERAL_ERROR = 2;
 	}
 
 	private final int mJobId;
 	private final String mDownloadUrl;
 	private final long mTimeOutSeconds;
+	private final String mOutputDir;
+	private final String mOutputFileName;
+	private final String mDescription; // for use in notification manager
 
 	private int mState;
 	private int mBlockedState;
-	private String mOutputFileName;
 	private long mContentLength = 0;
 	private int mBytesRead = 0;
 
-	public DownloadJob(String url,int seconds) {
+	public DownloadJob(String url, String description, String dir,
+			String filename, int seconds) {
+
 		mDownloadUrl = url;
+		mOutputDir = dir;
+		mOutputFileName = filename;
 		mTimeOutSeconds = seconds;
+		mDescription = description;
 		mJobId = url.hashCode();
 	}
 
@@ -55,7 +62,9 @@ public class DownloadJob implements Serializable, Parcelable {
 		mTimeOutSeconds = in.readLong();
 		mContentLength = in.readLong();
 		mBytesRead = in.readInt();
+		mOutputDir = in.readString();
 		mOutputFileName = in.readString();
+		mDescription = in.readString();
 	}
 
 	@Override
@@ -67,13 +76,25 @@ public class DownloadJob implements Serializable, Parcelable {
 		dest.writeLong(mTimeOutSeconds);
 		dest.writeLong(mContentLength);
 		dest.writeInt(mBytesRead);
+		dest.writeString(mOutputDir);
 		dest.writeString(mOutputFileName);
+		dest.writeString(mDescription);
 	}
 
 	// returns the filename if it's null, then default to returning
 	// the last segment of the URL, which hopefully makes sense
 	public String getFileName() {
 		return mOutputFileName;
+	}
+
+	/**
+	 * Returns the path of the directory where the file will be
+	 * written.
+	 *
+	 * @return destination directory to write to.
+	 */
+	public String getOutputDir() {
+		return mOutputDir;
 	}
 
 	public static final Parcelable.Creator<DownloadJob> CREATOR =
@@ -169,6 +190,23 @@ public class DownloadJob implements Serializable, Parcelable {
 
 	public long getmTimeOutSeconds() {
 		return mTimeOutSeconds;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof DownloadJob)) {
+			return false;
+		}
+
+		if (((DownloadJob) obj).getJobId() == getJobId()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public String getDescription() {
+		return mDescription;
 	}
 
 }
