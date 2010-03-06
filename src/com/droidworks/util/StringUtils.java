@@ -82,11 +82,16 @@ public class StringUtils {
 	   *
 	   * @param text the string you want to make a digest for.
 	   * @return the generated md5
-	   * @throws NoSuchAlgorithmException
 	   */
-	  public static String md5String(String text) throws NoSuchAlgorithmException{
+	  public static String md5String(String text) {
 
-	    MessageDigest algorithm = MessageDigest.getInstance("MD5");
+	    MessageDigest algorithm;
+		try {
+			algorithm = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			return null;
+		}
+
 	    algorithm.update(text.getBytes());
 
 	    byte[] digest = algorithm.digest();
