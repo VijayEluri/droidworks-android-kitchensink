@@ -32,6 +32,7 @@ public class Rss2Parser extends Parser<FeedItem> {
 
 	private FeedItem mFeedItem;
 	private final Feed mFeed = new Feed();
+	private FeedItemFactory mFeedItemFactory;
 
 	private static final String DEFAULT_NAMESPACE = "";
 	private static final String NS_ITUNES = "http://www.itunes.com/dtds/podcast-1.0.dtd";
@@ -39,6 +40,11 @@ public class Rss2Parser extends Parser<FeedItem> {
 
 	public Rss2Parser() {
 		super(DEFAULT_NAMESPACE);
+	}
+
+	public Rss2Parser(FeedItemFactory feedItemFactory) {
+		super(DEFAULT_NAMESPACE);
+		mFeedItemFactory = feedItemFactory;
 	}
 
 	@Override
@@ -148,7 +154,10 @@ public class Rss2Parser extends Parser<FeedItem> {
 
 		feedItemNode.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
-				mFeedItem = new FeedItem();
+				if (mFeedItemFactory != null)
+					mFeedItem = mFeedItemFactory.create();
+				else
+					mFeedItem = new FeedItem();
 			}
 		});
 
