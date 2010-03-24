@@ -31,7 +31,7 @@ public class DownloadJob implements Serializable, Parcelable {
 		public static final int WAITING_WIFI = 1;
 	}
 
-	private final int mJobId;
+	private final String mJobId;
 	private final String mDownloadUrl;
 	private final long mTimeOutSeconds;
 	private final String mOutputDir;
@@ -44,18 +44,18 @@ public class DownloadJob implements Serializable, Parcelable {
 	private int mBytesRead = 0;
 
 	public DownloadJob(String url, String description, String dir,
-			String filename, int seconds) {
+			String filename, int seconds, String jobId) {
 
 		mDownloadUrl = url;
 		mOutputDir = dir;
 		mOutputFileName = filename;
 		mTimeOutSeconds = seconds;
 		mDescription = description;
-		mJobId = url.hashCode();
+		mJobId = jobId;
 	}
 
 	private DownloadJob(Parcel in) {
-		mJobId = in.readInt();
+		mJobId = in.readString();
 		mDownloadUrl = in.readString();
 		mState = in.readInt();
 		mBlockedState = in.readInt();
@@ -69,7 +69,7 @@ public class DownloadJob implements Serializable, Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeInt(mJobId);
+		dest.writeString(mJobId);
 		dest.writeString(mDownloadUrl);
 		dest.writeInt(mState);
 		dest.writeInt(mBlockedState);
@@ -114,7 +114,6 @@ public class DownloadJob implements Serializable, Parcelable {
 		return 0;
 	}
 
-
 	public int getPercentageCompleted() {
 		return Math.round(( ((float) mBytesRead
 				/ (float) mContentLength)) * 100f);
@@ -152,7 +151,7 @@ public class DownloadJob implements Serializable, Parcelable {
 		return (mState == State.CANCELLED);
 	}
 
-	public int getJobId() {
+	public String getJobId() {
 		return mJobId;
 	}
 
@@ -188,7 +187,7 @@ public class DownloadJob implements Serializable, Parcelable {
 		return (isQueued() || isActive());
 	}
 
-	public long getmTimeOutSeconds() {
+	public long getTimeOutSeconds() {
 		return mTimeOutSeconds;
 	}
 
