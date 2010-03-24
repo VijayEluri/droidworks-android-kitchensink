@@ -23,7 +23,7 @@ import android.content.Context;
 import android.os.Build;
 
 /**
- * This class is heavily borrowed from a blog post by Josh Guilfoyle
+ * This code in this class is borrowed heavily from a blog post by Josh Guilfoyle
  *
  *  http://devtcg.blogspot.com/2009/12/gracefully-supporting-multiple-android.html
  *
