@@ -3,8 +3,6 @@ package com.droidworks.http.download;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-// TODO: instead of cancel, these things needs to respond to interrupts
-// that set the cancel flag..
 public abstract class DownloadTask<T> {
 
 	public static int STATUS_UNPROCESSED = -1;

@@ -18,8 +18,6 @@ import com.droidworks.util.AndroidUtils;
  */
 public class WritableStorageDownloadTask extends DownloadTask<String> {
 
-	// TODO: do i need to create an abstract class for the listener?
-
 	public WritableStorageDownloadTask(String url) {
 		super(url);
 	}
