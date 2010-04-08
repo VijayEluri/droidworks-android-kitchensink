@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.droidworks.syndication.rss.FeedAdapter.Image;
+import com.droidworks.util.StringUtils;
 
+// TODO, need to implement feeditem sorting based on date
 public class Feed {
 
 	private String mTitle;
@@ -123,6 +125,71 @@ public class Feed {
 
 	public void addItem(FeedItem tmpItem) {
 		mItems.add(tmpItem);
+	}
+
+	/**
+	 * Tests to see if the given item already is present within the feed by
+	 * comparing guid's.
+	 *
+	 * @param item
+	 * @return
+	 */
+	public boolean containsItem(FeedItem item) {
+		for (FeedItem innerItem : mItems) {
+			if (innerItem.getGuid().equals(item.getGuid())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Merge another feed into this one, will not overwrite unset/empty
+	 * values.
+	 *
+	 * @param feed
+	 */
+	public void mergeFeed(Feed feed) {
+		if (!StringUtils.hasChars(mTitle)) {
+			mTitle = feed.getTitle();
+		}
+		if (!StringUtils.hasChars(mLink)) {
+			mLink = feed.getLink();
+		}
+		if (!StringUtils.hasChars(mDescription)) {
+			mDescription = feed.getDescription();
+		}
+		if (mPubDate == null) {
+			mPubDate = feed.getPubDate();
+		}
+		if (!StringUtils.hasChars(mLanguage)) {
+			mLanguage = feed.getLanguage();
+		}
+		if (!StringUtils.hasChars(mGenerator)) {
+			mGenerator = feed.getGenerator();
+		}
+		if (!StringUtils.hasChars(mCopyright)) {
+			mCopyright = feed.getCopyright();
+		}
+		if (!StringUtils.hasChars(mManagingEditor)) {
+			mManagingEditor = feed.getManagingEditor();
+		}
+		if (!StringUtils.hasChars(mCategory)) {
+			mCategory = feed.getCategory();
+		}
+		if (mTTL == 0) {
+			mTTL = feed.getTTL();
+		}
+		if (mFeedImage == null) {
+			mFeedImage = feed.getFeedImage();
+		}
+
+		// merge feed items
+		for (FeedItem item : feed.getItems()) {
+			if (!containsItem(item))
+				mItems.add(item);
+		}
 	}
 
 }
