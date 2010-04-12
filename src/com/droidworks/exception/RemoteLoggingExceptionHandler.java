@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -73,6 +74,9 @@ public class RemoteLoggingExceptionHandler
 	}
 
 	public void uncaughtException(Thread thread, Throwable ex) {
+
+		Log.d("DEBUGDEBUG", "Exception caught, attempting to log");
+
 		 ErrorReporter reporter = new ErrorReporter(ex);
 		 new Thread(reporter).start();
 		 mDefaultHandler.uncaughtException(thread, ex);
@@ -87,6 +91,8 @@ public class RemoteLoggingExceptionHandler
 		}
 
 		public void run() {
+
+			Log.d("DEBUGDEBUG", "reporter is running");
 
 			HttpPost post = new HttpPost(mLoggerUrl);
 
@@ -107,7 +113,9 @@ public class RemoteLoggingExceptionHandler
 			try {
 				UrlEncodedFormEntity form = new UrlEncodedFormEntity(data, "utf-8");
 				post.setEntity(form);
-				new DefaultHttpClient().execute(post);
+				Log.d("DEBUGDEBUG", "executing http request");
+				HttpResponse response = new DefaultHttpClient().execute(post);
+				Log.d("DEBUGDEBUG", "response returned: " + response.getStatusLine());
 			}
 			catch (Exception e) {
 				Log.e(getClass().getName(),
