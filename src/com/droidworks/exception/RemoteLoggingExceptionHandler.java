@@ -57,8 +57,6 @@ public class RemoteLoggingExceptionHandler
 
 	public void uncaughtException(Thread thread, Throwable ex) {
 
-		Log.d("DEBUGDEBUG", "handling caught exception");
-
 		// marshall params, start service, run default handler
 		Intent intent = new Intent(mContext, RemoteLoggerService.class);
 		intent.putExtra(RemoteLoggerService.EXTRA_MESSAGE, ex.getMessage());

@@ -114,9 +114,7 @@ public class RemoteLoggerService extends Service {
 			try {
 				UrlEncodedFormEntity form = new UrlEncodedFormEntity(data, "utf-8");
 				post.setEntity(form);
-				Log.d("DEBUGDEBUG", "executing http request");
 				HttpResponse response = new DefaultHttpClient().execute(post);
-				Log.d("DEBUGDEBUG", "response returned: " + response.getStatusLine());
 			}
 			catch (Exception e) {
 				Log.e(getClass().getName(),

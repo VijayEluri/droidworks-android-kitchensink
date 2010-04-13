@@ -25,7 +25,6 @@ public class HttpGetWorkerTest extends InstrumentationTestCase {
 			fail();
 		}
 		catch (Exception e) {
-			Log.e("DEBUGDEBUG", "caught exception", e);
 			assertTrue(e.getCause() instanceof SocketTimeoutException);
 		}
 	}
