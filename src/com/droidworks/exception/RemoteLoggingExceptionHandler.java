@@ -16,19 +16,8 @@
 
 package com.droidworks.exception;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import android.content.pm.PackageInfo;
-import android.os.Build;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 /**
@@ -40,15 +29,10 @@ import android.util.Log;
 public class RemoteLoggingExceptionHandler
 	implements Thread.UncaughtExceptionHandler {
 
-	private final String mProduct = Build.PRODUCT;
-	private final String mDevice = Build.DEVICE;
-	private final String mSDK = Build.VERSION.SDK;
-	private final String mCodename = Build.VERSION.CODENAME;
-	private final String mAppVersionName;
-	private final String mAppVersionCode;
-	private final String mGuid;
 	private final Thread.UncaughtExceptionHandler mDefaultHandler;
 	private final String mLoggerUrl;
+	private final Context mContext;
+	private final String mPackageName;
 
 	public static final class Keys {
 		public static final String GUID = "guid";
@@ -62,73 +46,29 @@ public class RemoteLoggingExceptionHandler
 		public static final String PLATFORM_SDK = "platform_sdk";
 	};
 
-	public RemoteLoggingExceptionHandler(PackageInfo packageInfo,
-			String logUrl, String guid,
-			Thread.UncaughtExceptionHandler defaultHandler) {
+	public RemoteLoggingExceptionHandler(Context context, String logUrl,
+			String packageName, Thread.UncaughtExceptionHandler defaultHandler) {
 
 			mLoggerUrl = logUrl;
-			mGuid = guid;
-			mAppVersionName = packageInfo.versionName;
-			mAppVersionCode = Integer.toString(packageInfo.versionCode);
 			mDefaultHandler = defaultHandler;
+			mContext = context;
+			mPackageName = packageName;
 	}
 
 	public void uncaughtException(Thread thread, Throwable ex) {
 
-		Log.d("DEBUGDEBUG", "Exception caught, attempting to log");
+		Log.d("DEBUGDEBUG", "handling caught exception");
 
-		 ErrorReporter reporter = new ErrorReporter(ex);
-		 new Thread(reporter).start();
-		 mDefaultHandler.uncaughtException(thread, ex);
-	}
+		// marshall params, start service, run default handler
+		Intent intent = new Intent(mContext, RemoteLoggerService.class);
+		intent.putExtra(RemoteLoggerService.EXTRA_MESSAGE, ex.getMessage());
+		intent.putExtra(RemoteLoggerService.EXTRA_REMOTE_HOST_URL, mLoggerUrl);
+		intent.putExtra(RemoteLoggerService.EXTRA_STACK_TRACE,
+				android.util.Log.getStackTraceString(ex));
+		intent.putExtra(RemoteLoggerService.EXTRA_PACKAGE, mPackageName);
+		mContext.startService(intent);
 
-	private class ErrorReporter implements Runnable {
-
-		private final Throwable ex;
-
-		public ErrorReporter(Throwable ex) {
-			this.ex = ex;
-		}
-
-		public void run() {
-
-			Log.d("DEBUGDEBUG", "reporter is running");
-
-			HttpPost post = new HttpPost(mLoggerUrl);
-
-			ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
-			data.add(new BasicNameValuePair(Keys.GUID, mGuid));
-			data.add(new BasicNameValuePair(Keys.APP_VERSION, mAppVersionName));
-			data.add(new BasicNameValuePair(Keys.VERSION_CODE, mAppVersionCode));
-			data.add(new BasicNameValuePair(Keys.MESSAGE,
-					(ex.getMessage() == null)
-						? "An Exception Occured"
-					    : ex.getMessage()));
-			data.add(new BasicNameValuePair(Keys.TRACE, getStackTrace()));
-			data.add(new BasicNameValuePair(Keys.PRODUCT, mProduct));
-			data.add(new BasicNameValuePair(Keys.DEVICE, mDevice));
-			data.add(new BasicNameValuePair(Keys.BUILD_CODENAME, mCodename));
-			data.add(new BasicNameValuePair(Keys.PLATFORM_SDK, mSDK));
-
-			try {
-				UrlEncodedFormEntity form = new UrlEncodedFormEntity(data, "utf-8");
-				post.setEntity(form);
-				Log.d("DEBUGDEBUG", "executing http request");
-				HttpResponse response = new DefaultHttpClient().execute(post);
-				Log.d("DEBUGDEBUG", "response returned: " + response.getStatusLine());
-			}
-			catch (Exception e) {
-				Log.e(getClass().getName(),
-					"Failure transmitting exception data", e);
-			}
-		}
-
-		private String getStackTrace() {
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			PrintStream ps = new PrintStream(os);
-			ex.printStackTrace(ps);
-			return os.toString();
-		}
+		mDefaultHandler.uncaughtException(thread, ex);
 	}
 
 }
