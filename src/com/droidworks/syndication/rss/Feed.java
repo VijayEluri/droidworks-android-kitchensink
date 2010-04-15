@@ -1,12 +1,13 @@
 package com.droidworks.syndication.rss;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import com.droidworks.syndication.rss.FeedAdapter.Image;
 import com.droidworks.util.StringUtils;
 
-// TODO, need to implement feeditem sorting based on date
 public class Feed {
 
 	private String mTitle;
@@ -124,8 +125,25 @@ public class Feed {
 	}
 
 	public void addItem(FeedItem tmpItem) {
+		// add and sort
 		mItems.add(tmpItem);
 	}
+
+	private final Comparator<FeedItem> dateComparator = new Comparator<FeedItem>() {
+
+		@Override
+		public int compare(FeedItem item1, FeedItem item2) {
+
+			if (item1.getPubDate().after(item2.getPubDate())) {
+				return -1;
+			}
+			else if (item1.getPubDate().before(item2.getPubDate())) {
+				return 1;
+			}
+
+			return 0;
+		}
+	};
 
 	/**
 	 * Tests to see if the given item already is present within the feed by
@@ -135,6 +153,7 @@ public class Feed {
 	 * @return
 	 */
 	public boolean containsItem(FeedItem item) {
+
 		for (FeedItem innerItem : mItems) {
 			if (innerItem.getGuid().equals(item.getGuid())) {
 				return true;
@@ -188,8 +207,15 @@ public class Feed {
 		// merge feed items
 		for (FeedItem item : feed.getItems()) {
 			if (!containsItem(item))
-				mItems.add(item);
+				addItem(item);
 		}
+
+		// always sort after merging
+		sort();
+	}
+
+	public void sort() {
+		Collections.sort(mItems, dateComparator);
 	}
 
 }
