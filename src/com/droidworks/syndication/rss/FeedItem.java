@@ -21,12 +21,22 @@ public class FeedItem {
 	private String mItunesSummary;
 	private long mItunesDuration;  // duration in seconds
 
+	/**
+	 * Returns media item duration in milliseconds
+	 *
+	 * @return
+	 */
 	public long getItunesDuration() {
 		return mItunesDuration;
 	}
 
-	public void setItunesDuration(long duration) {
-		mItunesDuration =  duration;
+	/**
+	 * Set duration in milliseconds
+	 *
+	 * @param milliseconds
+	 */
+	public void setItunesDuration(long milliseconds) {
+		mItunesDuration =  milliseconds;
 	}
 
 	public String getTitle() {
