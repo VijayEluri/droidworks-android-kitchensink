@@ -93,7 +93,7 @@ public class Rss2Parser extends Parser<FeedItem> {
 
 		feedItemItunesDuration.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeedItem.setItunesDuration(mDurationParser.parse(body));
+				mFeedItem.setItunesDuration(mDurationParser.parse(body) * 1000);
 			}
  		});
 
