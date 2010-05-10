@@ -125,7 +125,6 @@ public class Feed {
 	}
 
 	public void addItem(FeedItem tmpItem) {
-		// add and sort
 		mItems.add(tmpItem);
 	}
 
