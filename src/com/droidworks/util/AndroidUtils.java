@@ -6,6 +6,8 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
@@ -112,6 +114,28 @@ public class AndroidUtils {
 
     public static int getScaledPixels(Context ctx, int unscaled) {
     	return (int) (unscaled * ctx.getResources().getDisplayMetrics().density + 0.5f);
+    }
+
+    /**
+     * Utility method to test if a package is installed or not.
+     *
+     * @param context
+     * @param packagName
+     * @return
+     */
+    public static boolean isPackageInstalled(Context context, String packagName) {
+		// test to see if tunewiki is installed
+		boolean rv = true;
+
+    	try {
+			PackageManager pm = context.getPackageManager();
+			pm.getPackageInfo(packagName, 0);
+		}
+		catch (NameNotFoundException e) {
+			rv = false;
+		}
+
+		return rv;
     }
 
 }
