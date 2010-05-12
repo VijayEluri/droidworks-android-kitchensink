@@ -3,8 +3,10 @@ package com.droidworks.util;
 import java.io.File;
 import java.io.IOException;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -16,6 +18,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
+import android.widget.Toast;
 
 public class AndroidUtils {
 
@@ -136,6 +139,23 @@ public class AndroidUtils {
 		}
 
 		return rv;
+    }
+
+    public static void sendEmail(Context context, String subject, String body,
+    		String error) {
+
+		Intent i = new Intent(Intent.ACTION_SEND);
+
+		i.putExtra(Intent.EXTRA_SUBJECT, subject);
+		i.putExtra(Intent.EXTRA_TEXT, body);
+		i.setType("message/rfc822");
+
+		try {
+			context.startActivity(i);
+		}
+		catch (ActivityNotFoundException e) {
+			Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+		}
     }
 
 }
