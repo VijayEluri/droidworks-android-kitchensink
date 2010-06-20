@@ -69,7 +69,10 @@ public class Feed {
 	}
 
 	public Date getPubDate() {
-		return (Date) mPubDate.clone();
+		if (mPubDate != null)
+			return (Date) mPubDate.clone();
+
+		return null;
 	}
 
 	public String getCopyright() {
