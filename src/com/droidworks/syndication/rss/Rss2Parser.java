@@ -90,6 +90,13 @@ public class Rss2Parser extends Parser<FeedItem> {
 		Element feedItemMediaNode = feedItemNode.getChild(NS_MEDIA, "content");
 		Element feedItemItunesSummary = feedItemNode.getChild(NS_ITUNES, "summary");
 		Element feedItemItunesDuration = feedItemNode.getChild(NS_ITUNES,"duration");
+		Element feedItemCategoryNode = feedItemNode.getChild("category");
+
+		feedItemCategoryNode.setEndTextElementListener(new EndTextElementListener() {
+			public void end(String text) {
+				mFeedItem.setCategory(text);
+			}
+		});
 
 		feedItemItunesDuration.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
