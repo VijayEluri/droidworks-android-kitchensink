@@ -19,6 +19,7 @@ public class FeedItem {
 	private int mMediaSize;
 	private String mMediaType;
 	private String mItunesSummary;
+	private String mCategory;
 	private long mItunesDuration;  // duration in seconds
 
 	/**
@@ -117,6 +118,14 @@ public class FeedItem {
 
 	public void setItunesSummary(String itunesSummary) {
 		mItunesSummary = itunesSummary;
+	}
+
+	public String getCategory() {
+		return mCategory;
+	}
+
+	public void setCategory(String category) {
+		mCategory = category;
 	}
 
 }
