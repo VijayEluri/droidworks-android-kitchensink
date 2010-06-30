@@ -6,6 +6,15 @@ public class YouTubeFeed {
 
 	private String mFeedAuthor;
 	private ArrayList<YouTubeItem> mItems = new ArrayList<YouTubeItem>();
+	private String mNextLink;
+
+	public String getNextLink() {
+		return mNextLink;
+	}
+
+	public void setNextLink(String nextLink) {
+		mNextLink = nextLink;
+	}
 
 	public String getFeedAuthor() {
 		return mFeedAuthor;

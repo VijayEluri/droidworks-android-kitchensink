@@ -1,5 +1,6 @@
 package com.droidworks.syndication.atom.gdata.youtube;
 
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,6 +46,12 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 	}
 
 	@Override
+	public void parse(InputStream stream) {
+		mFeed.setNextLink(null);
+		super.parse(stream);
+	}
+
+	@Override
 	protected void setupNodes() {
 		mRootElement = new RootElement(getDefaultNamespace(), "feed");
 
@@ -53,6 +60,7 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 
 		Element authorNode = mRootElement.requireChild(getDefaultNamespace(), "author");
 		Element authorNameNode = authorNode.requireChild(getDefaultNamespace(), "name");
+        Element linkNode = mRootElement.requireChild(getDefaultNamespace(), "link");
 
 		Element entryNode = mRootElement.getChild(getDefaultNamespace(), "entry");
 		Element pubDateNode = entryNode.getChild(getDefaultNamespace(), "published");
@@ -63,6 +71,14 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 		Element youTubeUrlNode = mediaGroupNode.requireChild(NS_MEDIA, "player");
 		Element durationNode = mediaGroupNode.requireChild(NS_YT, "duration");
 		Element thumbnailNode = mediaGroupNode.requireChild(NS_MEDIA, "thumbnail");
+
+		linkNode.setStartElementListener(new StartElementListener() {
+			public void start(Attributes attributes) {
+				if (attributes.getValue("rel").equals("next")) {
+					mFeed.setNextLink(attributes.getValue("href"));
+				}
+			}
+		});
 
 		thumbnailNode.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attrs) {
