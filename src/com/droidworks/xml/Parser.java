@@ -35,7 +35,7 @@ public abstract class Parser<T> {
 	protected abstract ContentHandler getContentHandler();
 
 	public void parse(InputStream stream) {
-		Log.d("DEBUGDEBUG", "PARSER IS WORKING");
+
 		mIsFinished = false;
 
 		try {
@@ -54,7 +54,6 @@ public abstract class Parser<T> {
 					"Failure parsing document", e);
 		}
 
-		Log.d("DEBUGDEBUG", "PARSER IS FINISHED");
 		mIsFinished = true;
 	}
 
