@@ -133,7 +133,7 @@ public class StringUtils {
 		  }
 		  // handle seconds only
 		  else {
-			  duration = Long.toString(seconds);
+			  duration = "0:" + addLeadingZero(seconds);
 		  }
 
 		  return duration;
