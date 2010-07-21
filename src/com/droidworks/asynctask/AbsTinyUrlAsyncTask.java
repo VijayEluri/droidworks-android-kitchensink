@@ -47,7 +47,7 @@ public abstract class AbsTinyUrlAsyncTask extends AsyncTask<String, Void, String
         String result = null;
 
         try {
-			HttpGet getMethod = new HttpGet(TINY_URL_API + url);
+			HttpGet getMethod = new HttpGet(TINY_URL_API + url[0]);
 	        DefaultHttpClient httpClient = new DefaultHttpClient();
 	        HttpUtils.setConnectionTimeout(httpClient, 10);
 	        HttpResponse response = httpClient.execute(getMethod);

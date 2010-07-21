@@ -170,7 +170,7 @@ public class AndroidUtils {
     		intent.putExtra(Intent.EXTRA_TEXT, message);
     		intent.setType("text/plain");
     		final PackageManager pm = context.getPackageManager();
-    		final List activityList = pm.queryIntentActivities(intent, 0);
+    		final List<?> activityList = pm.queryIntentActivities(intent, 0);
     	        int len =  activityList.size();
     		for (int i = 0; i < len; i++) {
     			final ResolveInfo app = (ResolveInfo) activityList.get(i);
