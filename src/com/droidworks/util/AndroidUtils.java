@@ -163,7 +163,6 @@ public class AndroidUtils {
     }
 
     public static boolean tweetNativeApp(Context context, String message) {
-
     	boolean rv = false;
 
     	try{
