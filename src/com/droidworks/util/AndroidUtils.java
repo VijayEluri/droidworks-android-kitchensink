@@ -2,13 +2,17 @@ package com.droidworks.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -157,5 +161,40 @@ public class AndroidUtils {
 			Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
 		}
     }
+
+    public static boolean tweetNativeApp(Context context, String message) {
+
+    	boolean rv = false;
+
+    	try{
+    		Intent intent = new Intent(Intent.ACTION_SEND);
+    		intent.putExtra(Intent.EXTRA_TEXT, message);
+    		intent.setType("text/plain");
+    		final PackageManager pm = context.getPackageManager();
+    		final List activityList = pm.queryIntentActivities(intent, 0);
+    	        int len =  activityList.size();
+    		for (int i = 0; i < len; i++) {
+    			final ResolveInfo app = (ResolveInfo) activityList.get(i);
+    			if ("com.twitter.android.PostActivity".equals(app.activityInfo.name)) {
+    				final ActivityInfo activity=app.activityInfo;
+    				final ComponentName name=new ComponentName(activity.applicationInfo.packageName, activity.name);
+    				intent=new Intent(Intent.ACTION_SEND);
+    				intent.addCategory(Intent.CATEGORY_LAUNCHER);
+    				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+    				intent.setComponent(name);
+    				intent.putExtra(Intent.EXTRA_TEXT, message);
+    				context.startActivity(intent);
+    				rv = true;
+    				break;
+    			}
+    		}
+    	}
+    	catch(final ActivityNotFoundException ignored) {
+    		// do nothing
+    	}
+
+    	return rv;
+    }
+
 
 }
