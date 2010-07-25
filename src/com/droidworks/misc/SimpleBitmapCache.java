@@ -4,7 +4,7 @@ import java.util.Map.Entry;
 
 import android.graphics.Bitmap;
 
-public class SimpleBitmapCache extends LruCache<String, Bitmap> {
+public class SimpleBitmapCache extends LruSoftCache<String, Bitmap> {
 
     @Override
     public void put(String key, Bitmap value) {
