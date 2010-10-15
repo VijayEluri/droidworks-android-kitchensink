@@ -131,6 +131,14 @@ public class Feed {
 		mItems.add(tmpItem);
 	}
 
+	public void replaceItem(FeedItem item) {
+		for (int i = 0; i < mItems.size(); i++) {
+			if (mItems.get(i).getGuid().equals(item.getGuid())) {
+				mItems.set(i, item);
+			}
+		}
+	}
+
 	private final Comparator<FeedItem> dateComparator = new Comparator<FeedItem>() {
 
 		@Override
