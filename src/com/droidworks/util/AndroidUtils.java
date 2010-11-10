@@ -2,6 +2,7 @@ package com.droidworks.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import android.content.ActivityNotFoundException;
@@ -20,6 +21,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
@@ -195,5 +197,27 @@ public class AndroidUtils {
     	return rv;
     }
 
+	/**
+	 * Returns true when platform version is lower or equal to 1.5
+	 * Since prior to 1.5 there was no Build.VERSION.SDK_INT available.
+	 *
+	 * @return
+	 */
+	public static boolean isAPILevelLower4() {
+		return "1.5".compareTo(Build.VERSION.RELEASE) >= 0;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static int getAPINumber() {
+		// SDK_INT is available from API 4
+		if (isAPILevelLower4()) return 3;
+		int version = 3;
+		try {
+			Class buildClass = Build.VERSION.class;
+			Field sdkint = buildClass.getField("SDK_INT");
+			version = sdkint.getInt(null);
+		} catch (Exception ignore) {}
+		return version;
+	}
 
 }

@@ -136,7 +136,7 @@ public class Rss2Parser extends Parser<FeedItem> {
 					mFeedItem.setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
-					Log.e(getClass().getCanonicalName(), "Error parsing pubDate");
+					Log.e(getClass().getCanonicalName(), "Error parsing pubDate", e);
 				}
 			}
 		});
@@ -174,8 +174,11 @@ public class Rss2Parser extends Parser<FeedItem> {
 				final FeedItem tmpItem = mFeedItem;
 				mFeedItem = null;
 
-				// always add items to the feed
-				mFeed.addItem(tmpItem);
+				// only add feeditem if the pubdate isn't null,
+				// null pubdates cause a crash, and we can't sort
+				// without it..
+				if (mFeedItem.getPubDate() != null)
+					mFeed.addItem(tmpItem);
 
 				// notify a listener if present
 				if (getListener() != null) {

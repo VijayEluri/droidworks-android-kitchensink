@@ -1,6 +1,9 @@
 package com.droidworks.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class IoUtils {
 
@@ -23,4 +26,17 @@ public class IoUtils {
 		return outputDir.mkdirs();
 	}
 
+	/**
+	 * Reads an InputStream into an OutputStream
+	 *
+	 * @param is
+	 * @param os
+	 * @throws IOException
+	 */
+    public static void InputStreamToOutputStream(InputStream is, OutputStream os) throws IOException {
+        int b;
+        while ((b = is.read()) != -1) {
+            os.write(b);
+        }
+    }
 }
