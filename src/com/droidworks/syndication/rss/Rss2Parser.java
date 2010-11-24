@@ -177,7 +177,7 @@ public class Rss2Parser extends Parser<FeedItem> {
 				// only add feeditem if the pubdate isn't null,
 				// null pubdates cause a crash, and we can't sort
 				// without it..
-				if (mFeedItem.getPubDate() != null)
+				if (tmpItem.getPubDate() != null)
 					mFeed.addItem(tmpItem);
 
 				// notify a listener if present
