@@ -91,7 +91,16 @@ public class Rss2Parser extends Parser<FeedItem> {
 		Element feedItemItunesSummary = feedItemNode.getChild(NS_ITUNES, "summary");
 		Element feedItemItunesDuration = feedItemNode.getChild(NS_ITUNES,"duration");
 		Element feedItemCategoryNode = feedItemNode.getChild("category");
-
+		Element feedItemEnclosureNode = feedItemNode.getChild("enclosure");
+		
+		feedItemEnclosureNode.setStartElementListener(new StartElementListener() {
+			public void start(Attributes attrs) {
+				mFeedItem.setMediaUrl(attrs.getValue("url"));
+				mFeedItem.setMediaType(attrs.getValue("type"));
+				mFeedItem.setMediaSize(Integer.parseInt((attrs.getValue("length"))));
+			}
+		});
+		
 		feedItemCategoryNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String text) {
 				mFeedItem.setCategory(text);
@@ -170,7 +179,6 @@ public class Rss2Parser extends Parser<FeedItem> {
 
 		feedItemNode.setEndElementListener(new EndElementListener() {
 			public void end() {
-
 				final FeedItem tmpItem = mFeedItem;
 				mFeedItem = null;
 
