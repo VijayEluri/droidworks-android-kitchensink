@@ -9,6 +9,7 @@ import java.util.Date;
  */
 public class FeedItem {
 
+	private String mAuthorNode;
 	private String mTitle;
 	private String mLink;
 	private String mComments;
@@ -126,6 +127,14 @@ public class FeedItem {
 
 	public void setCategory(String category) {
 		mCategory = category;
+	}
+
+	public String getAuthorNode() {
+		return mAuthorNode;
+	}
+
+	public void setAuthorNode(String authorNode) {
+		mAuthorNode = authorNode;
 	}
 
 }

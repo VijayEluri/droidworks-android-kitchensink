@@ -14,12 +14,13 @@ import android.sax.StartElementListener;
 import android.util.Log;
 
 import com.droidworks.parsers.rss.itunes.DurationParser;
+import com.droidworks.xml.FeedParser;
 import com.droidworks.xml.Parser;
 
 /*
  * Parser for RSS 2.0 syndication feeds.  Supports some itunes tags
  */
-public class Rss2Parser extends Parser<FeedItem> {
+public class Rss2Parser extends FeedParser {
 
 	private RootElement mRootElement;
 
@@ -31,7 +32,6 @@ public class Rss2Parser extends Parser<FeedItem> {
 	private final DurationParser mDurationParser = new DurationParser();
 
 	private FeedItem mFeedItem;
-	private final Feed mFeed = new Feed();
 	private FeedItemFactory mFeedItemFactory;
 
 	private static final String DEFAULT_NAMESPACE = "";
@@ -186,7 +186,7 @@ public class Rss2Parser extends Parser<FeedItem> {
 				// null pubdates cause a crash, and we can't sort
 				// without it..
 				if (tmpItem.getPubDate() != null)
-					mFeed.addItem(tmpItem);
+					getFeed().addItem(tmpItem);
 
 				// notify a listener if present
 				if (getListener() != null) {
@@ -218,7 +218,7 @@ public class Rss2Parser extends Parser<FeedItem> {
 				FeedAdapter.Image image = new FeedAdapter.Image(
 						mImageUrl, mImageTitle, mImageLink, mImageWidth,
 						mImageHeight);
-				mFeed.setFeedImage(image);
+				getFeed().setFeedImage(image);
 			}
 		});
 
@@ -236,44 +236,44 @@ public class Rss2Parser extends Parser<FeedItem> {
 
 		ttlNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setTTL(Integer.parseInt(body));
+				getFeed().setTTL(Integer.parseInt(body));
 			}
 		});
 
 		categoryNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setCategory(body);
+				getFeed().setCategory(body);
 			}
 		});
 
 		managingEditorNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setManagingEditor(body);
+				getFeed().setManagingEditor(body);
 			}
 		});
 
 		copyrightNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setCopyright(body);
+				getFeed().setCopyright(body);
 			}
 		});
 
 		languageNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setLanguage(body);
+				getFeed().setLanguage(body);
 			}
 		});
 
 		generatorNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setGenerator(body);
+				getFeed().setGenerator(body);
 			}
 		});
 
 		pubDateNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
 				try {
-					mFeed.setPubDate(df.parse(body));
+					getFeed().setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
 					Log.e(getClass().getCanonicalName(), "Error parsing pubDate");
@@ -283,25 +283,21 @@ public class Rss2Parser extends Parser<FeedItem> {
 
 		descriptionNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setDescription(body);
+				getFeed().setDescription(body);
 			}
 		});
 
 		linkNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setLink(body);
+				getFeed().setLink(body);
 			}
 		});
 
 		titleNode.setEndTextElementListener(new EndTextElementListener() {
 			public void end(String body) {
-				mFeed.setTitle(body);
+				getFeed().setTitle(body);
 			}
 		});
-	}
-
-	public Feed getFeed() {
-		return mFeed;
 	}
 
 }
