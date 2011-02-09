@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.droidworks.syndication.rss;
+package com.droidworks.syndication;
 
 /**
  * @author jasonhudgins

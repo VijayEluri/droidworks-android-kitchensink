@@ -1,11 +1,8 @@
 package com.droidworks.syndication.atom;
 
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -17,11 +14,9 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Log;
 
-import com.droidworks.syndication.rss.Feed;
-import com.droidworks.syndication.rss.FeedItem;
-import com.droidworks.syndication.rss.FeedItemFactory;
+import com.droidworks.syndication.FeedItem;
+import com.droidworks.syndication.FeedItemFactory;
 import com.droidworks.xml.FeedParser;
-import com.droidworks.xml.Parser;
 
 public class AtomParser extends FeedParser {
 

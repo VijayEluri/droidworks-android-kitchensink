@@ -2,6 +2,8 @@ package com.droidworks.syndication.rss;
 
 import java.io.InputStream;
 
+import com.droidworks.syndication.FeedItem;
+
 import android.content.res.AssetManager;
 import android.test.InstrumentationTestCase;
 

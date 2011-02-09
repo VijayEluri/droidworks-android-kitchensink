@@ -14,8 +14,10 @@ import android.sax.StartElementListener;
 import android.util.Log;
 
 import com.droidworks.parsers.rss.itunes.DurationParser;
+import com.droidworks.syndication.FeedAdapter;
+import com.droidworks.syndication.FeedItem;
+import com.droidworks.syndication.FeedItemFactory;
 import com.droidworks.xml.FeedParser;
-import com.droidworks.xml.Parser;
 
 /*
  * Parser for RSS 2.0 syndication feeds.  Supports some itunes tags

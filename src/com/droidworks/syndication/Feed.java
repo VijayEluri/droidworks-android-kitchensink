@@ -1,11 +1,11 @@
-package com.droidworks.syndication.rss;
+package com.droidworks.syndication;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import com.droidworks.syndication.rss.FeedAdapter.Image;
+import com.droidworks.syndication.FeedAdapter.Image;
 import com.droidworks.util.StringUtils;
 
 public class Feed {

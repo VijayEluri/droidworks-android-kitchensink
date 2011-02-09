@@ -1,4 +1,4 @@
-package com.droidworks.syndication.rss;
+package com.droidworks.syndication;
 
 import java.util.Date;
 
