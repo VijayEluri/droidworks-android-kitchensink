@@ -117,29 +117,8 @@ public class AtomParser extends FeedParser {
 			}
 		});		
 		
-		// DEBUG only
-		entryAutherNode.setStartElementListener(new StartElementListener() {
-			@Override
-			public void start(Attributes attrs) {
-				Log.d("DEBUGDEBUG", "read author node");
-			}
-		});
-		
-		// DEBUG only
-		mRootElement.setStartElementListener(new StartElementListener() {
-			@Override
-			public void start(Attributes attrs) {
-				Log.d("DEBUGDEBUG", "read feed node");
-			}
-		});		
-		
-
-		
 		entryNode.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
-				
-				Log.d("DEBUGDEBUG", "read an entry node");
-				
 				if (mFeedItemFactory != null)
 					mFeedItem = mFeedItemFactory.create();
 				else
