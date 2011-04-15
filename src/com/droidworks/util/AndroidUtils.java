@@ -163,6 +163,35 @@ public class AndroidUtils {
 			Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
 		}
     }
+    
+    // TODO, one day i might fix this to make sense...
+    @Deprecated
+    public static void tweetMessage(Context context, String message) {
+    	Intent tweetIntent = new Intent(Intent.ACTION_SEND);
+    	tweetIntent.putExtra(Intent.EXTRA_TEXT, message);
+    	tweetIntent.setType("application/twitter");
+
+    	PackageManager pm = context.getPackageManager();
+    	List<ResolveInfo> lract 
+    	= pm.queryIntentActivities(tweetIntent,
+    	    PackageManager.MATCH_DEFAULT_ONLY);
+
+    	boolean resolved = false;
+
+    	for(ResolveInfo ri: lract)
+    	{
+    	    if(ri.activityInfo.name.endsWith(".SendTweet"))
+    	    {
+    	        tweetIntent.setClassName(ri.activityInfo.packageName,
+    	                        ri.activityInfo.name);
+    	        resolved = true;
+    	        break;
+    	    }
+    	}
+    	
+    	context.startActivity(resolved ? tweetIntent :
+    	    Intent.createChooser(tweetIntent, "Choose one"));    	
+    }
 
     public static boolean tweetNativeApp(Context context, String message) {
     	boolean rv = false;
