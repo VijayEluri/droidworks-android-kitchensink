@@ -124,6 +124,7 @@ public class DownloadJob implements Serializable, Parcelable {
 	}
 
 	public void setState(int state, int blockedState) {
+		
 		mState = state;
 
 		// if the job is not blocked, then clear wifi flags
@@ -147,10 +148,15 @@ public class DownloadJob implements Serializable, Parcelable {
 		return mBytesRead;
 	}
 
+	/**
+	 * Indicates if the job has been cancelled by the user or due to an error.
+	 * 
+	 * @return
+	 */
 	public boolean isCancelled() {
-		return (mState == State.CANCELLED);
+		return (mState == State.CANCELLED) || (mState == State.ERROR);
 	}
-
+	
 	public String getJobId() {
 		return mJobId;
 	}
