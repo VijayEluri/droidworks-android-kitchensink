@@ -55,6 +55,7 @@ public class StringUtils {
 
 	// simple test to make sure a string is not null and
 	// is not zero length
+	@Deprecated
 	public static boolean hasChars(String s) {
 		if (s == null)
 			return false;
