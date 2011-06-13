@@ -35,6 +35,12 @@ public class AndroidUtils {
 		return manager.getDeviceId();
 	}
 
+	/**
+	 * Simple method to test for wifi connectivity.
+	 * 
+	 * @param context
+	 * @return
+	 */
 	public static boolean isWifiActive(Context context) {
 
 		ConnectivityManager	mConnMgr = (ConnectivityManager)
@@ -49,7 +55,7 @@ public class AndroidUtils {
 
 		return false;
 	}
-
+	
     // creates a null listener
     public static OnClickListener nullListener() {
         return new OnClickListener() {
