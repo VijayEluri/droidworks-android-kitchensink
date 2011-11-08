@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
+import android.text.TextUtils;
+
 import com.droidworks.syndication.FeedAdapter.Image;
 import com.droidworks.util.StringUtils;
 
@@ -179,32 +181,32 @@ public class Feed {
 	 *
 	 * @param feed
 	 */
-	public void mergeFeed(Feed feed) {
-		if (!StringUtils.hasChars(mTitle)) {
+	public void mergeIntoMe(Feed feed) {
+		if (TextUtils.isEmpty(mTitle)) {
 			mTitle = feed.getTitle();
 		}
-		if (!StringUtils.hasChars(mLink)) {
+		if (TextUtils.isEmpty(mLink)) {
 			mLink = feed.getLink();
 		}
-		if (!StringUtils.hasChars(mDescription)) {
+		if (TextUtils.isEmpty(mDescription)) {
 			mDescription = feed.getDescription();
 		}
 		if (mPubDate == null) {
 			mPubDate = feed.getPubDate();
 		}
-		if (!StringUtils.hasChars(mLanguage)) {
+		if (TextUtils.isEmpty(mLanguage)) {
 			mLanguage = feed.getLanguage();
 		}
-		if (!StringUtils.hasChars(mGenerator)) {
+		if (TextUtils.isEmpty(mGenerator)) {
 			mGenerator = feed.getGenerator();
 		}
-		if (!StringUtils.hasChars(mCopyright)) {
+		if (TextUtils.isEmpty(mCopyright)) {
 			mCopyright = feed.getCopyright();
 		}
-		if (!StringUtils.hasChars(mManagingEditor)) {
+		if (TextUtils.isEmpty(mManagingEditor)) {
 			mManagingEditor = feed.getManagingEditor();
 		}
-		if (!StringUtils.hasChars(mCategory)) {
+		if (TextUtils.isEmpty(mCategory)) {
 			mCategory = feed.getCategory();
 		}
 		if (mTTL == 0) {
