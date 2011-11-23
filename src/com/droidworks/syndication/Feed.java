@@ -8,7 +8,7 @@ import java.util.Date;
 import android.text.TextUtils;
 
 import com.droidworks.syndication.FeedAdapter.Image;
-import com.droidworks.util.StringUtils;
+
 
 public class Feed {
 
