@@ -1,5 +1,6 @@
 package com.droidworks.syndication;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,8 +8,10 @@ import java.util.Date;
  *
  * @author jasonleehudgins@gmail.com
  */
-public class FeedItem {
+public class FeedItem implements Serializable {
 
+	private static final long serialVersionUID = 6360228609918230909L;
+	
 	private String mAuthorNode;
 	private String mTitle;
 	private String mLink;
