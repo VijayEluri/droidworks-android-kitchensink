@@ -152,6 +152,18 @@ public class AndroidUtils {
 
 		return rv;
     }
+    
+    // TODO, testing
+    public static void share(Context context, String subject, String body) {
+    	
+    	Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+   // 	sharingIntent.setType("text/plain");
+    	sharingIntent.putExtra(Intent.EXTRA_TEXT, body);
+    	sharingIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+    	sharingIntent.setType("application/twitter");
+    	
+    	context.startActivity(Intent.createChooser(sharingIntent, "choose method"));	
+    }
 
     public static void sendEmail(Context context, String subject, String body,
     		String error) {
@@ -170,66 +182,66 @@ public class AndroidUtils {
 		}
     }
     
-    // TODO, one day i might fix this to make sense...
-    @Deprecated
-    public static void tweetMessage(Context context, String message) {
-    	Intent tweetIntent = new Intent(Intent.ACTION_SEND);
-    	tweetIntent.putExtra(Intent.EXTRA_TEXT, message);
-    	tweetIntent.setType("application/twitter");
+    /**
+     * Method to find a twitter client on the device.  I lifted this from :
+     * http://regis.decamps.info/blog/2011/06/intent-to-open-twitter-client-on-android/
+     * 
+     * @param context
+     * @return
+     */
+    public static Intent findTwitterClient(Context context) {
+		final String[] twitterApps = {
+				// package // name - nb installs (thousands)
+				"com.twitter.android", // official - 10 000
+				"com.twidroid", // twidroyd - 5 000
+				"com.handmark.tweetcaster", // Tweecaster - 5 000
+				"com.thedeck.android" // TweetDeck - 5 000 
+		};
+		Intent tweetIntent = new Intent();
+		tweetIntent.setType("text/plain");
+		final PackageManager packageManager = context.getPackageManager();
+		
+		List<ResolveInfo> list = packageManager.queryIntentActivities(
+				tweetIntent, PackageManager.MATCH_DEFAULT_ONLY);
 
-    	PackageManager pm = context.getPackageManager();
-    	List<ResolveInfo> lract 
-    	= pm.queryIntentActivities(tweetIntent,
-    	    PackageManager.MATCH_DEFAULT_ONLY);
+		for (int i = 0; i < twitterApps.length; i++) {
+			for (ResolveInfo resolveInfo : list) {
+				String p = resolveInfo.activityInfo.packageName;
+				if (p != null && p.startsWith(twitterApps[i])) {
+					tweetIntent.setPackage(p);
+					return tweetIntent;
+				}
+			}
+		}
+		
+		return null;
+	}
 
-    	boolean resolved = false;
+    /**
+     * Method to send a tweet.
+     * 
+     * @param context
+     * @param message
+     * @return
+     */
+    public static boolean tweet(Context context, String message) {
 
-    	for(ResolveInfo ri: lract)
-    	{
-    	    if(ri.activityInfo.name.endsWith(".SendTweet"))
-    	    {
-    	        tweetIntent.setClassName(ri.activityInfo.packageName,
-    	                        ri.activityInfo.name);
-    	        resolved = true;
-    	        break;
-    	    }
-    	}
-    	
-    	context.startActivity(resolved ? tweetIntent :
-    	    Intent.createChooser(tweetIntent, "Choose one"));    	
-    }
-
-    public static boolean tweetNativeApp(Context context, String message) {
-    	boolean rv = false;
-
-    	try{
-    		Intent intent = new Intent(Intent.ACTION_SEND);
+    	try {
+    		Intent intent = findTwitterClient(context);
+    		
+    		if (intent == null)
+    			return false;
+    		
+    		intent.setAction(Intent.ACTION_SEND);
     		intent.putExtra(Intent.EXTRA_TEXT, message);
     		intent.setType("text/plain");
-    		final PackageManager pm = context.getPackageManager();
-    		final List<?> activityList = pm.queryIntentActivities(intent, 0);
-    	        int len =  activityList.size();
-    		for (int i = 0; i < len; i++) {
-    			final ResolveInfo app = (ResolveInfo) activityList.get(i);
-    			if ("com.twitter.android.PostActivity".equals(app.activityInfo.name)) {
-    				final ActivityInfo activity=app.activityInfo;
-    				final ComponentName name=new ComponentName(activity.applicationInfo.packageName, activity.name);
-    				intent=new Intent(Intent.ACTION_SEND);
-    				intent.addCategory(Intent.CATEGORY_LAUNCHER);
-    				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-    				intent.setComponent(name);
-    				intent.putExtra(Intent.EXTRA_TEXT, message);
-    				context.startActivity(intent);
-    				rv = true;
-    				break;
-    			}
-    		}
+    		context.startActivity(intent);
     	}
     	catch(final ActivityNotFoundException ignored) {
-    		// do nothing
+    		return false;
     	}
 
-    	return rv;
+    	return true;
     }
 
 	/**
