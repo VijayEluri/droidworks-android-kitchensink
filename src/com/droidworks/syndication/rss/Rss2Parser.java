@@ -11,6 +11,7 @@ import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.droidworks.parsers.rss.itunes.DurationParser;
@@ -99,7 +100,11 @@ public class Rss2Parser extends FeedParser {
 			public void start(Attributes attrs) {
 				mFeedItem.setMediaUrl(attrs.getValue("url"));
 				mFeedItem.setMediaType(attrs.getValue("type"));
-				mFeedItem.setMediaSize(Integer.parseInt((attrs.getValue("length"))));
+				
+				String length = attrs.getValue("length");
+				if  (!TextUtils.isEmpty(length) && TextUtils.isDigitsOnly(length)) {
+					mFeedItem.setMediaSize(Integer.parseInt(length));
+				}
 			}
 		});
 		
@@ -187,9 +192,10 @@ public class Rss2Parser extends FeedParser {
 				// only add feeditem if the pubdate isn't null,
 				// null pubdates cause a crash, and we can't sort
 				// without it..
-				if (tmpItem.getPubDate() != null)
+				if (tmpItem.getPubDate() != null) {
 					getFeed().addItem(tmpItem);
-
+				}
+				
 				// notify a listener if present
 				if (getListener() != null) {
 					getListener().onItemParsed(tmpItem);
