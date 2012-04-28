@@ -16,7 +16,7 @@ public class DownloadJob implements Serializable, Parcelable {
 		public static final int INITIALIZED = 0;
 		// duh
 		public static final int COMPLETED = 1;
-		// currentlyb eing downloaded
+		// currently being downloaded
 		public static final int ACTIVE = 2;
 		// job in queue, waiting to be downloaded
 		public static final int QUEUED = 3;
