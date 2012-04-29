@@ -52,8 +52,13 @@ public class AtomParser extends FeedParser {
 		mRootElement = new RootElement(getDefaultNamespace(), "feed");
 
 		// atom uses RFC3339 format ex: 2011-02-06T08:26:07-08:00
+		// and also            2012-04-28T20:52:22Z
+		// 
+		// parsing this format is hard, i have a backup parser in case the
+		// first one fails.
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-
+		final SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		
 		Element entryNode = mRootElement.getChild(getDefaultNamespace(), "entry");
 		
 		Element entryAutherNode = entryNode.getChild(getDefaultNamespace(), "author");
@@ -102,7 +107,11 @@ public class AtomParser extends FeedParser {
 					mFeedItem.setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
-					Log.e(getClass().getCanonicalName(), "Error parsing pubDate: " + body, e);
+					try {
+						mFeedItem.setPubDate(df2.parse(body));
+					} catch (ParseException e1) {
+						Log.e(getClass().getCanonicalName(), "Error parsing pubDate: " + body, e);
+					}
 				}
 			}
 		});		
@@ -128,8 +137,6 @@ public class AtomParser extends FeedParser {
 		
 		entryNode.setEndElementListener(new EndElementListener() {
 			public void end() {
-				
-
 				
 				final FeedItem tmpItem = mFeedItem;
 				mFeedItem = null;
