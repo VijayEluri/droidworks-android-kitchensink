@@ -53,7 +53,7 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 
 	@Override
 	protected void setupNodes() {
-		mRootElement = new RootElement(getDefaultNamespace(), "feed");
+		mRootElement = new RootElement(getDefaultNamespace(), "factory");
 
 		// 2009-12-04T22:51:39.000-0000
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -138,7 +138,7 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 						mDuration, mSmallThumbnailUrl, mLargeThumbnailUrl,
 						parseId(mYouTubeUrl));
 
-				// always add item to the feed
+				// always add item to the factory
 				mFeed.addItem(item);
 
 				// notify a listener if there is one.

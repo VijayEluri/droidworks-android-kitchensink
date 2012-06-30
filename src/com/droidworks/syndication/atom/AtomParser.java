@@ -49,7 +49,7 @@ public class AtomParser extends FeedParser {
 
 	@Override
 	protected void setupNodes() {
-		mRootElement = new RootElement(getDefaultNamespace(), "feed");
+		mRootElement = new RootElement(getDefaultNamespace(), "factory");
 
 		// atom uses RFC3339 format ex: 2011-02-06T08:26:07-08:00
 		// and also            2012-04-28T20:52:22Z

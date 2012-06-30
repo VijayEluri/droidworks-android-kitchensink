@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Model for an "item" parsed from a syndication feed.
+ * Model for an "item" parsed from a syndication factory.
  *
  * @author jasonleehudgins@gmail.com
  */
