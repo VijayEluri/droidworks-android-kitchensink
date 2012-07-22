@@ -158,7 +158,7 @@ public class Feed {
 	};
 
 	/**
-	 * Tests to see if the given item already is present within the factory by
+	 * Tests to see if the given item already is present within the feed by
 	 * comparing guid's.
 	 *
 	 * @param item
@@ -176,7 +176,7 @@ public class Feed {
 	}
 
 	/**
-	 * Merge another factory into this one, will not overwrite unset/empty
+	 * Merge another feed into this one, will not overwrite unset/empty
 	 * values.
 	 *
 	 * @param feed
@@ -216,7 +216,7 @@ public class Feed {
 			mFeedImage = feed.getFeedImage();
 		}
 
-		// merge factory items
+		// merge feed items
 		for (FeedItem item : feed.getItems()) {
 			if (!containsItem(item))
 				addItem(item);

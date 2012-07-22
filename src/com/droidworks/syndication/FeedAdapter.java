@@ -17,7 +17,7 @@ public abstract class FeedAdapter extends BaseAdapter {
 		mFeed = feed;
 	}
 
-	// class for holding image information regarding this factory.
+	// class for holding image information regarding this feed.
 	public static class Image {
 		public final String url;
 		public final String title;
