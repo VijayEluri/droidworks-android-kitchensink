@@ -138,7 +138,11 @@ public class YouTubeVideoFeedParser extends Parser<YouTubeItem> {
 						mDuration, mSmallThumbnailUrl, mLargeThumbnailUrl,
 						parseId(mYouTubeUrl));
 
-				// always add item to the feed
+                // skip items with bad dates.
+                if (item.getDatePublished() == null)
+                    return;
+
+				// add item to the feed
 				mFeed.addItem(item);
 
 				// notify a listener if there is one.
