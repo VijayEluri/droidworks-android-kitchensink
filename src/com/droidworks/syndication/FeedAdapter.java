@@ -1,6 +1,8 @@
 package com.droidworks.syndication;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 
@@ -18,7 +20,7 @@ public abstract class FeedAdapter extends BaseAdapter {
 	}
 
 	// class for holding image information regarding this feed.
-	public static class Image {
+	public static class Image implements Parcelable {
 		public final String url;
 		public final String title;
 		public final String link;
@@ -33,6 +35,38 @@ public abstract class FeedAdapter extends BaseAdapter {
 			this.link = link;
 			this.width = width;
 			this.height = height;
+		}
+
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel out, int arg1) {
+			out.writeString(url);
+			out.writeString(title);
+			out.writeString(link);
+			out.writeInt(width);
+			out.writeInt(height);
+		}
+		
+		public static final Creator<Image> CREATOR = new Creator<Image>() {
+			public Image createFromParcel(Parcel in) {
+				return new Image(in);
+			}
+
+			public Image[] newArray(int size) {
+				return new Image[size];
+			}
+		};
+
+		public Image(Parcel in) {
+			url = in.readString();
+			title = in.readString();
+			link = in.readString();
+			width = in.readInt();
+			height = in.readInt();
 		}
 	}
 
