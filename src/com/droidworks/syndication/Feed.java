@@ -251,10 +251,10 @@ public class Feed implements Parcelable {
 		out.writeString(mCategory);
 		out.writeInt(mTTL);
 		out.writeParcelable(mFeedImage, 0);
-		out.writeSerializable(mItems);
+		out.writeList(mItems);
 	}
 	
-	public static final Parcelable.Creator<Feed> CREATOR = new Parcelable.Creator<Feed>() {
+	public static final Creator<Feed> CREATOR = new Creator<Feed>() {
 		public Feed createFromParcel(Parcel in) {
 			return new Feed(in);
 		}
@@ -279,7 +279,8 @@ public class Feed implements Parcelable {
 		mCategory = in.readString();
 		mTTL = in.readInt();
 		mFeedImage = in.readParcelable(Image.class.getClassLoader());
-		mItems = (ArrayList<FeedItem>) in.readSerializable();
+		mItems = new ArrayList<FeedItem>();
+		in.readList(mItems, null);
 	}
 
 
