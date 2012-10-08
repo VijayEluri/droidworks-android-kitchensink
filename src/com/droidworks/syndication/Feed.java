@@ -251,7 +251,7 @@ public class Feed implements Parcelable {
 		out.writeString(mCategory);
 		out.writeInt(mTTL);
 		out.writeParcelable(mFeedImage, 0);
-		out.writeList(mItems);
+		out.writeTypedList(mItems);
 	}
 	
 	public static final Creator<Feed> CREATOR = new Creator<Feed>() {
@@ -271,6 +271,7 @@ public class Feed implements Parcelable {
 		mTitle = in.readString();
 		mLink = in.readString();
 		mDescription = in.readString();
+		mPubDate = new Date();
 		mPubDate.setTime(in.readLong());
 		mLanguage = in.readString();
 		mGenerator = in.readString();
@@ -279,8 +280,7 @@ public class Feed implements Parcelable {
 		mCategory = in.readString();
 		mTTL = in.readInt();
 		mFeedImage = in.readParcelable(Image.class.getClassLoader());
-		mItems = new ArrayList<FeedItem>();
-		in.readList(mItems, null);
+		in.readTypedList(mItems, FeedItem.CREATOR);
 	}
 
 
