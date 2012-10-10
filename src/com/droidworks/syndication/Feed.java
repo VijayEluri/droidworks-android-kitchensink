@@ -5,14 +5,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.droidworks.syndication.FeedAdapter.Image;
 
 
-public class Feed implements Parcelable {
+public class Feed {
 
 	private String mTitle;
 	private String mLink;
@@ -231,57 +229,5 @@ public class Feed implements Parcelable {
 	public void sort() {
 		Collections.sort(mItems, dateComparator);
 	}
-
-	@Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel out, int arg1) {
-		out.writeString(mTitle);
-		out.writeString(mLink);
-		out.writeString(mDescription);
-		out.writeLong(mPubDate != null ? mPubDate.getTime() : 0);
-		out.writeString(mLanguage);
-		out.writeString(mGenerator);
-		out.writeString(mCopyright);
-		out.writeString(mManagingEditor);
-		out.writeString(mCategory);
-		out.writeInt(mTTL);
-		out.writeParcelable(mFeedImage, 0);
-		out.writeTypedList(mItems);
-	}
-	
-	public static final Creator<Feed> CREATOR = new Creator<Feed>() {
-		public Feed createFromParcel(Parcel in) {
-			return new Feed(in);
-		}
-
-		public Feed[] newArray(int size) {
-			return new Feed[size];
-		}
-	};
-
-	public Feed() {
-	}
-	
-	public Feed(Parcel in) {
-		mTitle = in.readString();
-		mLink = in.readString();
-		mDescription = in.readString();
-		mPubDate = new Date();
-		mPubDate.setTime(in.readLong());
-		mLanguage = in.readString();
-		mGenerator = in.readString();
-		mCopyright = in.readString();
-		mManagingEditor = in.readString();
-		mCategory = in.readString();
-		mTTL = in.readInt();
-		mFeedImage = in.readParcelable(Image.class.getClassLoader());
-		in.readTypedList(mItems, FeedItem.CREATOR);
-	}
-
 
 }
