@@ -5,6 +5,7 @@ package com.droidworks.exception;
 
 import java.util.ArrayList;
 
+import android.text.TextUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -62,10 +63,7 @@ public class RemoteLoggerService extends Service {
 		mPackage = intent.getStringExtra(EXTRA_PACKAGE);
 
 		// quick sanity check
-		if (       !StringUtils.hasChars(mTrace)
-				|| !StringUtils.hasChars(mUrl)
-				|| !StringUtils.hasChars(mPackage)) {
-
+		if (TextUtils.isEmpty(mTrace) || TextUtils.isEmpty(mUrl) || TextUtils.isEmpty(mPackage)) {
 			return;
 		}
 
