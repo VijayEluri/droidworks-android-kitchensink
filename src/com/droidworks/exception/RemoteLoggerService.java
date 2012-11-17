@@ -100,9 +100,9 @@ public class RemoteLoggerService extends Service {
 			data.add(new BasicNameValuePair(Keys.APP_VERSION, mAppVersionName));
 			data.add(new BasicNameValuePair(Keys.VERSION_CODE, mAppVersionCode));
 			data.add(new BasicNameValuePair(Keys.MESSAGE,
-					(StringUtils.hasChars(mMessage))
-						? mMessage
-					    : "An Exception Occured"));
+					(TextUtils.isEmpty(mMessage))
+						? "An Exception Occured"
+					    : mMessage));
 			data.add(new BasicNameValuePair(Keys.TRACE, mTrace));
 			data.add(new BasicNameValuePair(Keys.PRODUCT, mProduct));
 			data.add(new BasicNameValuePair(Keys.DEVICE, mDevice));
