@@ -2,8 +2,10 @@ package com.droidworks.http.download;
 
 import java.io.Serializable;
 
+import android.R;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class DownloadJob implements Serializable, Parcelable {
 
@@ -115,6 +117,10 @@ public class DownloadJob implements Serializable, Parcelable {
 	}
 
 	public int getPercentageCompleted() {
+
+        if (mContentLength == 0)
+            return 0;
+
 		return Math.round(( ((float) mBytesRead
 				/ (float) mContentLength)) * 100f);
 	}
