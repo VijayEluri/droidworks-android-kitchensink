@@ -44,6 +44,7 @@ public class DownloadJob implements Serializable, Parcelable {
 	private int mBlockedState;
 	private long mContentLength = 0;
 	private int mBytesRead = 0;
+    private int mRetryCount = 0;
 
 	public DownloadJob(String url, String description, String dir,
 			String filename, int seconds, String jobId) {
@@ -64,6 +65,7 @@ public class DownloadJob implements Serializable, Parcelable {
 		mTimeOutSeconds = in.readLong();
 		mContentLength = in.readLong();
 		mBytesRead = in.readInt();
+        mRetryCount = in.readInt();
 		mOutputDir = in.readString();
 		mOutputFileName = in.readString();
 		mDescription = in.readString();
@@ -78,10 +80,15 @@ public class DownloadJob implements Serializable, Parcelable {
 		dest.writeLong(mTimeOutSeconds);
 		dest.writeLong(mContentLength);
 		dest.writeInt(mBytesRead);
+        dest.writeInt(mRetryCount);
 		dest.writeString(mOutputDir);
 		dest.writeString(mOutputFileName);
 		dest.writeString(mDescription);
 	}
+
+    public void clearBytesRead() {
+        mBytesRead = 0;
+    }
 
 	// returns the filename if it's null, then default to returning
 	// the last segment of the URL, which hopefully makes sense
@@ -98,6 +105,10 @@ public class DownloadJob implements Serializable, Parcelable {
 	public String getOutputDir() {
 		return mOutputDir;
 	}
+
+    public int getRetryCount() {
+        return mRetryCount;
+    }
 
 	public static final Parcelable.Creator<DownloadJob> CREATOR =
 		new Parcelable.Creator<DownloadJob>() {
@@ -128,6 +139,10 @@ public class DownloadJob implements Serializable, Parcelable {
 	public int getState() {
 		return mState;
 	}
+
+    public void incrementRetryCount() {
+        mRetryCount++;
+    }
 
 	public void setState(int state, int blockedState) {
 		
