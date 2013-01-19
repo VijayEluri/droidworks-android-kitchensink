@@ -16,6 +16,7 @@ public abstract class Parser<T> {
 
 	private final String mDefaultNameSpace;
 	private boolean mIsFinished = false;
+    private String mEncoding;
 
 	// should i support multiple listeners?
 	private OnItemParsedListener<T> mListener;
@@ -45,8 +46,16 @@ public abstract class Parser<T> {
             /* Get the XMLReader of the SAXParser we created. */
             XMLReader xr = sp.getXMLReader();
 
+            // TODO, just doing some testing
 			xr.setContentHandler(getContentHandler());
-			xr.parse(new InputSource(stream));
+            InputSource is = new InputSource(stream);
+
+            // set the encoding if requested.
+            if (mEncoding != null)  {
+                is.setEncoding(mEncoding);
+            }
+
+			xr.parse(is);
 			stream.close();
 		}
 		catch (Exception e) {
@@ -73,7 +82,11 @@ public abstract class Parser<T> {
 		mListener = null;
 	}
 
-	/**
+    public void setEncoding(String encoding) {
+        mEncoding = encoding;
+    }
+
+    /**
 	 * Has the parser completed?
      *
 	 * @return
