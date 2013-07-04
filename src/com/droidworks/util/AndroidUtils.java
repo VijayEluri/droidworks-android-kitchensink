@@ -33,6 +33,32 @@ public class AndroidUtils {
 		return manager.getDeviceId();
 	}
 
+    /**
+     * Simple method to scrape up some device information that's useful for debugging from the Build class.
+     *
+     * @return
+     */
+    public static String getDeviceInfo() {
+        StringBuilder info = new StringBuilder();
+
+        info.append("Device information\n-------------------------\n");
+        info.append("BOARD: " + Build.BOARD + "\n");
+        info.append("BOOTLOADER: " + Build.BOOTLOADER + "\n");
+        info.append("BRAND: " + Build.BRAND + "\n");
+        info.append("CPU_ABI: " + Build.CPU_ABI + "\n");
+        info.append("DEVICE: " + Build.DEVICE + "\n");
+        info.append("DISPLAY: " + Build.DISPLAY + "\n");
+        info.append("FINGERPRINT: " + Build.FINGERPRINT + "\n");
+        info.append("HARDWARE: " + Build.HARDWARE + "\n");
+        info.append("HOST: " + Build.HOST + "\n");
+        info.append("ID: " + Build.ID + "\n");
+        info.append("MANUFACTURER: " + Build.MANUFACTURER + "\n");
+        info.append("MODEL: " + Build.MODEL + "\n");
+        info.append("PRODUCT: " + Build.PRODUCT + "\n");
+
+        return info.toString();
+    }
+
 	/**
 	 * Simple method to test for wifi connectivity.
 	 * 
