@@ -26,6 +26,13 @@ import android.widget.Toast;
 
 public class AndroidUtils {
 
+    /**
+     * Returns the device ID
+     *
+     * @param context A valid context instance
+     * @return the device ID
+     */
+    @SuppressWarnings("unused")
 	public static String getDeviceId(Context context) {
 		TelephonyManager manager = (TelephonyManager)
 			context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -36,7 +43,7 @@ public class AndroidUtils {
     /**
      * Simple method to scrape up some device information that's useful for debugging from the Build class.
      *
-     * @return
+     * @return A long, but nicely formatted string containing all the device information that could be useful for debugging.
      */
     public static String getDeviceInfo() {
         StringBuilder info = new StringBuilder();
@@ -62,8 +69,8 @@ public class AndroidUtils {
 	/**
 	 * Simple method to test for wifi connectivity.
 	 * 
-	 * @param context
-	 * @return
+	 * @param context A valid context instance
+	 * @return true or false
 	 */
 	public static boolean isWifiActive(Context context) {
 
@@ -73,21 +80,7 @@ public class AndroidUtils {
 		NetworkInfo.State wifiState = mConnMgr
 			.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
 
-		if ( wifiState == NetworkInfo.State.CONNECTED) {
-			return true;
-		}
-
-		return false;
-	}
-	
-    // creates a null listener
-    public static OnClickListener nullListener() {
-        return new OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                // do nothing
-            }
-        };
+        return wifiState == NetworkInfo.State.CONNECTED;
     }
 
     public static Bitmap getBitmap(Drawable d) {
@@ -105,13 +98,7 @@ public class AndroidUtils {
         String state = Environment.getExternalStorageState();
 
         if (Environment.MEDIA_MOUNTED.equals(state)) {
-            if (requireWriteAccess) {
-                boolean writable = checkFsWritable();
-                return writable;
-            }
-            else {
-                return true;
-            }
+            return !requireWriteAccess || checkFsWritable();
         }
         else if (!requireWriteAccess
         		&& Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
@@ -151,6 +138,7 @@ public class AndroidUtils {
         }
     }
 
+    @SuppressWarnings("unused")
     public static int getScaledPixels(Context ctx, int unscaled) {
     	return (int) (unscaled * ctx.getResources().getDisplayMetrics().density + 0.5f);
     }
@@ -162,6 +150,7 @@ public class AndroidUtils {
      * @param packagName
      * @return
      */
+    @SuppressWarnings("unused")
     public static boolean isPackageInstalled(Context context, String packagName) {
 		// test to see if tunewiki is installed
 		boolean rv = true;
@@ -176,12 +165,11 @@ public class AndroidUtils {
 
 		return rv;
     }
-    
-    // TODO, testing
+
+    @Deprecated
     public static void share(Context context, String subject, String body) {
     	
     	Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-   // 	sharingIntent.setType("text/plain");
     	sharingIntent.putExtra(Intent.EXTRA_TEXT, body);
     	sharingIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
     	sharingIntent.setType("application/twitter");
@@ -189,14 +177,11 @@ public class AndroidUtils {
     	context.startActivity(Intent.createChooser(sharingIntent, "choose method"));	
     }
 
+    @Deprecated
     public static void sendEmail(Context context, String subject, String body,
     		String error) {
 
-		Intent i = new Intent(Intent.ACTION_SEND);
-
-		i.putExtra(Intent.EXTRA_SUBJECT, subject);
-		i.putExtra(Intent.EXTRA_TEXT, body);
-		i.setType("message/rfc822");
+        Intent i = getEmailIntent(subject, body);
 
 		try {
 			context.startActivity(i);
@@ -205,14 +190,32 @@ public class AndroidUtils {
 			Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
 		}
     }
+
+    /**
+     * Handy method to generate an email intent.
+     *
+     * @param subject The subject line of the email.
+     * @param body The message body.
+     * @return an Intent that is setup for an email action.
+     */
+    public static Intent getEmailIntent(String subject, String body) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+
+        i.putExtra(Intent.EXTRA_SUBJECT, subject);
+        i.putExtra(Intent.EXTRA_TEXT, body);
+        i.setType("message/rfc822");
+
+        return i;
+    }
     
     /**
      * Method to find a twitter client on the device.  I lifted this from :
      * http://regis.decamps.info/blog/2011/06/intent-to-open-twitter-client-on-android/
      * 
-     * @param context
-     * @return
+     * @param context A valid context instance
+     * @return twitter intent
      */
+    @Deprecated
     public static Intent findTwitterClient(Context context) {
 		final String[] twitterApps = {
 				// package // name - nb installs (thousands)
@@ -248,6 +251,7 @@ public class AndroidUtils {
      * @param message
      * @return
      */
+    @Deprecated
     public static boolean tweet(Context context, String message) {
 
     	try {
@@ -272,7 +276,7 @@ public class AndroidUtils {
 	 * Returns true when platform version is lower or equal to 1.5
 	 * Since prior to 1.5 there was no Build.VERSION.SDK_INT available.
 	 *
-	 * @return
+	 * @return return true or false
 	 */
 	public static boolean isAPILevelLower4() {
 		return "1.5".compareTo(Build.VERSION.RELEASE) >= 0;
