@@ -62,6 +62,7 @@ public class AndroidUtils {
         info.append("MANUFACTURER: " + Build.MANUFACTURER + "\n");
         info.append("MODEL: " + Build.MODEL + "\n");
         info.append("PRODUCT: " + Build.PRODUCT + "\n");
+        info.append("Android Version: " + Build.VERSION.SDK + "\n");
 
         return info.toString();
     }
