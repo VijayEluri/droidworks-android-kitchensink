@@ -39,7 +39,7 @@ public class ListAdapterFilter implements ListAdapter {
 		return adapter.getItem(offsetPosition(position));
 	}
 
-	private int offsetPosition(int position) {
+	public int offsetPosition(int position) {
 		
 		int count = 0;
 		for (int i = 0; i < adapter.getCount(); i++) {
