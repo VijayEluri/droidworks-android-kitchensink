@@ -30,41 +30,16 @@ import android.os.Build;
  * @author jasonhudgins
  *
  */
+@Deprecated
 public abstract class ServiceBackgroundManager {
 
 	public static ServiceBackgroundManager getInstance() {
-		if (Integer.parseInt(Build.VERSION.SDK) <= 4) {
-	            return PreEclair.Holder.sInstance;
-		}
-	    else {
-	            return EclairAndBeyond.Holder.sInstance;
-	    }
+        return EclairAndBeyond.Holder.sInstance;
 	}
 
 	public abstract void showNotification(Service context, int id, Notification notification);
 
 	public abstract void hideNotification(Service context, int id);
-
-	private static class PreEclair extends ServiceBackgroundManager {
-
-		private static class Holder {
-			private static final PreEclair sInstance = new PreEclair();
-	    }
-
-	    private NotificationManager getNotificationManager(Context context) {
-	    	return (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-	    }
-
-	    public void showNotification(Service context, int id, Notification n) {
-	            context.setForeground(true);
-	            getNotificationManager(context).notify(id, n);
-	    }
-
-	    public void hideNotification(Service context, int id) {
-	            context.setForeground(false);
-	            getNotificationManager(context).cancel(id);
-	    }
-	}
 
 	private static class EclairAndBeyond extends ServiceBackgroundManager {
 
