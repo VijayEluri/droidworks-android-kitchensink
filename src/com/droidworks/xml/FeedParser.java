@@ -12,7 +12,9 @@ import com.droidworks.syndication.FeedItem;
 public abstract class FeedParser extends Parser<FeedItem> {
 
 	private final Feed mFeed = new Feed();
-	
+
+    private String mLogTag = "FeedParser";
+
 	public FeedParser(String defaultNamespace) {
 		super(defaultNamespace);
 	}
@@ -21,4 +23,11 @@ public abstract class FeedParser extends Parser<FeedItem> {
 		return mFeed;
 	}
 
+    public String getLogTag() {
+        return (mLogTag != null) ? mLogTag : "FeedParser";
+    }
+
+    public void setLogTag(String logTag) {
+        mLogTag = logTag;
+    }
 }

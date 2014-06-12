@@ -110,7 +110,7 @@ public class AtomParser extends FeedParser {
 					try {
 						mFeedItem.setPubDate(df2.parse(body));
 					} catch (ParseException e1) {
-						Log.e(getClass().getCanonicalName(), "Error parsing pubDate: " + body, e);
+						Log.e(getLogTag(), "Error parsing pubDate: " + body, e);
 					}
 				}
 			}

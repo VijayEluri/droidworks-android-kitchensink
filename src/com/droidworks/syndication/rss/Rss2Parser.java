@@ -152,7 +152,7 @@ public class Rss2Parser extends FeedParser {
 					mFeedItem.setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
-					Log.e(getClass().getCanonicalName(), "Error parsing pubDate", e);
+					Log.e(getLogTag(), "Error parsing pubDate", e);
 				}
 			}
 		});
