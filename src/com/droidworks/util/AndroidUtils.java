@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -65,6 +67,16 @@ public class AndroidUtils {
         info.append("Android Version: " + Build.VERSION.SDK + "\n");
 
         return info.toString();
+    }
+
+    public static boolean isAmazonDevice(Activity activity) {
+        boolean isAmazonDevice = Build.MANUFACTURER.equalsIgnoreCase("amazon");
+
+        final Application application = activity.getApplication();
+        String installerName = application.getPackageManager().getInstallerPackageName(application.getPackageName());
+        boolean fromAmazonStore = installerName != null && installerName.equalsIgnoreCase("com.amazon.venezia");
+
+        return isAmazonDevice || fromAmazonStore;
     }
 
 	/**
