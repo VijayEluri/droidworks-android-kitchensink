@@ -37,7 +37,14 @@ public class YouTubeFeed {
 	}
 
 	public void addItem(YouTubeItem item) {
-		mItems.add(item);
+
+        // short circuit out of here if the item is already in the list.
+        for (YouTubeItem existingItem : mItems) {
+            if (item.getYouTubeId().equals(existingItem.getYouTubeId()))
+                return;
+        }
+
+        mItems.add(item);
 	}
 
 }
