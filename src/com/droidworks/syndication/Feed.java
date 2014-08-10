@@ -5,17 +5,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.droidworks.syndication.FeedAdapter.Image;
 
 
-public class Feed {
+public class Feed implements Parcelable {
 
 	private String mTitle;
 	private String mLink;
 	private String mDescription;
-	private Date mPubDate;
+	private Date mPubDate = new Date();
 	private String mLanguage;
 	private String mGenerator;
 	private String mCopyright;
@@ -24,7 +26,55 @@ public class Feed {
 	private int mTTL;
 	private Image mFeedImage;
 
-	private ArrayList<FeedItem> mItems = new ArrayList<FeedItem>();
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(mTitle);
+        parcel.writeString(mLink);
+        parcel.writeString(mDescription);
+        parcel.writeLong(mPubDate.getTime());
+        parcel.writeString(mLanguage);
+        parcel.writeString(mGenerator);
+        parcel.writeString(mCopyright);
+        parcel.writeString(mManagingEditor);
+        parcel.writeString(mCategory);
+        parcel.writeInt(mTTL);
+        parcel.writeParcelable(mFeedImage, flags);
+    }
+
+    public static final Parcelable.Creator<Feed> CREATOR = new Parcelable.Creator<Feed>() {
+        public Feed createFromParcel(Parcel in) {
+            return new Feed(in);
+        }
+
+        public Feed[] newArray(int size) {
+            return new Feed[size];
+        }
+    };
+
+    private Feed(Parcel in) {
+        mTitle = in.readString();
+        mLink = in.readString();
+        mDescription = in.readString();
+        mPubDate = new Date(in.readLong());
+        mLanguage = in.readString();
+        mGenerator = in.readString();
+        mCopyright = in.readString();
+        mManagingEditor = in.readString();
+        mCategory = in.readString();
+        mTTL = in.readInt();
+        mFeedImage = in.readParcelable(Image.class.getClassLoader());
+    }
+
+    public Feed() {
+        // default no arg constructor
+    }
+
+    private ArrayList<FeedItem> mItems = new ArrayList<FeedItem>();
 
 	public String getLanguage() {
 		return mLanguage;
