@@ -16,7 +16,7 @@
 
 package com.droidworks.util;
 
-import java.io.File;
+import java.io.*;
 
 /**
  * @author jasonhudgins
@@ -28,5 +28,32 @@ public class FileUtil {
 		File f = new File(path);
 		return f.exists();
 	}
+
+
+    /**
+     * Dump an input stream to a file, throws exceptions that you will likely want to handle.
+     *
+     * @param file
+     * @param inputStream
+     * @throws IOException
+     */
+    public static void dumpToFile(File file, InputStream inputStream) throws IOException {
+
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+
+        FileOutputStream fios =  new FileOutputStream(file);
+
+        byte[] buffer = new byte[1024];
+        int len = inputStream.read(buffer);
+        while (len != -1) {
+            fios.write(buffer, 0, len);
+            len = inputStream.read(buffer);
+        }
+
+        fios.close();
+        inputStream.close();
+    }
 
 }
