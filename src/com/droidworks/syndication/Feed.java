@@ -141,7 +141,25 @@ public class Feed {
 		}
 	}
 
-	private final Comparator<FeedItem> dateComparator = new Comparator<FeedItem>() {
+
+    private final Comparator<FeedItem> inverseDateComparator = new Comparator<FeedItem>() {
+
+        @Override
+        public int compare(FeedItem item1, FeedItem item2) {
+
+            if (item1.getPubDate().after(item2.getPubDate())) {
+                return 1;
+            }
+            else if (item1.getPubDate().before(item2.getPubDate())) {
+                return -1;
+            }
+
+            return 0;
+        }
+    };
+
+
+    private final Comparator<FeedItem> dateComparator = new Comparator<FeedItem>() {
 
 		@Override
 		public int compare(FeedItem item1, FeedItem item2) {
@@ -230,4 +248,5 @@ public class Feed {
 		Collections.sort(mItems, dateComparator);
 	}
 
+    public void reverseSort() { Collections.sort(mItems, inverseDateComparator); }
 }
