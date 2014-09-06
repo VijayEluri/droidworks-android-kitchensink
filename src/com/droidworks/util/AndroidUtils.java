@@ -15,6 +15,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
@@ -308,4 +309,14 @@ public class AndroidUtils {
 		return version;
 	}
 
+
+    /**
+     * Are we in landscape mode or not?
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isLandscape(Context context) {
+        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
 }
