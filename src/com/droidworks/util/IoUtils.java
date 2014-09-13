@@ -1,9 +1,9 @@
 package com.droidworks.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import android.annotation.TargetApi;
+import android.content.Context;
+
+import java.io.*;
 
 public class IoUtils {
 
@@ -38,5 +38,34 @@ public class IoUtils {
         while ((b = is.read()) != -1) {
             os.write(b);
         }
+    }
+
+    /**
+     * Simple method to dump a file to the external drive and returns the path.  Purpose of this
+     * is to help with debugging stuff.
+     *
+     * @param context
+     * @param input
+     * @param filename
+     * @return
+     */
+    @TargetApi(8)
+    public static String dumpToFile(Context context, String input, String filename) {
+
+        File f = context.getExternalFilesDir(null);
+        File output = new File(f.getPath() + "/" + filename);
+
+        try {
+            FileWriter fw = new FileWriter(output, false);
+            fw.append(input);
+            fw.flush();
+            fw.close();
+        } catch (Exception e) {
+            android.util.Log.e("DroidCatcher", "Error writing to log", e);
+        }
+
+        return output.getAbsolutePath();
+
+
     }
 }
