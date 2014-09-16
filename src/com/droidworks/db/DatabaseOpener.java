@@ -46,7 +46,7 @@ public class DatabaseOpener extends SQLiteOpenHelper {
 	}
 
     // called by onCreate
-    private boolean executeScript(String sqlScript, SQLiteDatabase db) {
+    protected boolean executeScript(String sqlScript, SQLiteDatabase db) {
 
     	if (null == db) {
     		Log.e(getClass().getName(), "Database param is null!");
@@ -81,7 +81,7 @@ public class DatabaseOpener extends SQLiteOpenHelper {
 		return false;
     }
 
-    private String getScriptNameCreate() {
+    protected String getScriptNameCreate() {
     	return mName + "_create.sql";
     }
 
@@ -106,6 +106,10 @@ public class DatabaseOpener extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 	}
+
+    protected String getName() {
+        return mName;
+    }
 
 }
 
