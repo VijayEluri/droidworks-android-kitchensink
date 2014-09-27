@@ -23,7 +23,7 @@ import com.droidworks.xml.FeedParser;
 /*
  * Parser for RSS 2.0 syndication feeds.  Supports some itunes tags
  */
-public class Rss2Parser extends FeedParser {
+public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 
 	private RootElement mRootElement;
 
@@ -198,7 +198,8 @@ public class Rss2Parser extends FeedParser {
 				
 				// notify a listener if present
 				if (getListener() != null) {
-					getListener().onItemParsed(tmpItem);
+                    OnItemParsedListener listener = getListener();
+					listener.onItemParsed(tmpItem);
 				}
 			}
 		});

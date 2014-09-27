@@ -9,9 +9,9 @@ import com.droidworks.syndication.FeedItem;
  * @author jasonhudgins
  *
  */
-public abstract class FeedParser extends Parser<FeedItem> {
+public abstract class FeedParser<T extends FeedItem> extends Parser<T> {
 
-	private final Feed mFeed = new Feed();
+	private final Feed<T> mFeed = new Feed();
 
     private String mLogTag = "FeedParser";
 

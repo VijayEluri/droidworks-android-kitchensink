@@ -5,6 +5,7 @@ import java.io.InputStream;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.droidworks.syndication.FeedItem;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -12,7 +13,7 @@ import org.xml.sax.XMLReader;
 import android.util.Log;
 
 
-public abstract class Parser<T> {
+public abstract class Parser<T extends FeedItem> {
 
 	private final String mDefaultNameSpace;
 	private boolean mIsFinished = false;

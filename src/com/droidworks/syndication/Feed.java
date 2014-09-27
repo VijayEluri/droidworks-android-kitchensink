@@ -1,9 +1,6 @@
 package com.droidworks.syndication;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.*;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,7 +9,7 @@ import android.text.TextUtils;
 import com.droidworks.syndication.FeedAdapter.Image;
 
 
-public class Feed implements Parcelable {
+public class Feed<T extends FeedItem> implements Parcelable {
 
 	private String mTitle;
 	private String mLink;
@@ -74,7 +71,7 @@ public class Feed implements Parcelable {
         // default no arg constructor
     }
 
-    private ArrayList<FeedItem> mItems = new ArrayList<FeedItem>();
+    private ArrayList<T> mItems = new ArrayList<T>();
 
 	public String getLanguage() {
 		return mLanguage;
@@ -167,11 +164,11 @@ public class Feed implements Parcelable {
 		mFeedImage = feedImage;
 	}
 
-	public ArrayList<FeedItem> getItems() {
+	public List<T> getItems() {
 		return mItems;
 	}
 
-	public void setItems(ArrayList<FeedItem> items) {
+	public void setItems(ArrayList<T> items) {
 		mItems = items;
 	}
 
@@ -179,11 +176,11 @@ public class Feed implements Parcelable {
 		return mItems.get(i);
 	}
 
-	public void addItem(FeedItem tmpItem) {
+	public void addItem(T tmpItem) {
 		mItems.add(tmpItem);
 	}
 
-	public void replaceItem(FeedItem item) {
+	public void replaceItem(T item) {
 		for (int i = 0; i < mItems.size(); i++) {
 			if (mItems.get(i).getGuid().equals(item.getGuid())) {
 				mItems.set(i, item);
@@ -284,8 +281,10 @@ public class Feed implements Parcelable {
 			mFeedImage = feed.getFeedImage();
 		}
 
+        List<T> feedItems = feed.getItems();
+
 		// merge feed items
-		for (FeedItem item : feed.getItems()) {
+		for (T item : feedItems) {
 			if (!containsItem(item))
 				addItem(item);
 		}
