@@ -35,12 +35,12 @@ import com.droidworks.util.StringUtils;
 public class DatabaseOpener extends SQLiteOpenHelper {
 
 	protected final Context mContext;
+    private final String mLogTag;
 	private String mName;
 
-    public DatabaseOpener(Context context, String name,
-			CursorFactory factory, int version) {
-
+    public DatabaseOpener(Context context, String logTag, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
+        mLogTag = logTag;
 		mName = name;
 		mContext = context;
 	}
@@ -49,9 +49,10 @@ public class DatabaseOpener extends SQLiteOpenHelper {
     protected boolean executeScript(String sqlScript, SQLiteDatabase db) {
 
     	if (null == db) {
-    		Log.e(getClass().getName(), "Database param is null!");
+    		Log.e(mLogTag, "Database param is null!");
     		return false;
     	}
+
 		try {
 			AssetManager am = mContext.getAssets();
 			String sql = StringUtils.slurp(am.open(sqlScript));
@@ -67,15 +68,10 @@ public class DatabaseOpener extends SQLiteOpenHelper {
 			return true;
 		}
 		catch (FileNotFoundException e) {
-			Log.e(getClass().getName(),
-				String.format("unable to open script file: [%1$s]", sqlScript), e);
-			db = null;
+			Log.e(mLogTag, "Unable to open script file: " + sqlScript, e);
 		}
 		catch (IOException e) {
-			Log.e(getClass().getName(),
-				String.format(
-						"IO error initialzing database from [%1$s]", sqlScript), e);
-			db = null;
+			Log.e(mLogTag, "IO error initializign database from script: " + sqlScript, e);
 		}
 
 		return false;
@@ -87,8 +83,12 @@ public class DatabaseOpener extends SQLiteOpenHelper {
 
 	@Override
     public void onCreate(SQLiteDatabase db) {
+
+        Log.d(mLogTag, "creating database from script: " + getScriptNameCreate());
+
 		String filename = getScriptNameCreate();
 		db.beginTransaction();
+
 		try {
 			if (executeScript(filename, db) ) {
 				db.setTransactionSuccessful();
