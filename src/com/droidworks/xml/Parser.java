@@ -13,7 +13,7 @@ import org.xml.sax.XMLReader;
 import android.util.Log;
 
 
-public abstract class Parser<T extends FeedItem> {
+public abstract class Parser<T> {
 
 	private final String mDefaultNameSpace;
 	private boolean mIsFinished = false;

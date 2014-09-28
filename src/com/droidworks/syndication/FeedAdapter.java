@@ -82,7 +82,7 @@ public abstract class FeedAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		return mFeed.getItems().get(position).getGuid().hashCode();
+        return mFeed.getItem(position).getGuid().hashCode();
 	}
 
 	public LayoutInflater getLayoutInflater() {
