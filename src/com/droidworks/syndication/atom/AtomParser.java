@@ -3,6 +3,7 @@ package com.droidworks.syndication.atom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -57,8 +58,10 @@ public class AtomParser extends FeedParser {
 		// parsing this format is hard, i have a backup parser in case the
 		// first one fails.
 		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		final SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		
+        df2.setTimeZone(TimeZone.getTimeZone("UTC"));
+
 		Element entryNode = mRootElement.getChild(getDefaultNamespace(), "entry");
 		
 		Element entryAutherNode = entryNode.getChild(getDefaultNamespace(), "author");

@@ -58,7 +58,10 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 	@Override
 	protected void setupNodes() {
 
-	    final SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+        // example pubdate
+        // Fri, 03 Oct 2014 01:18:04 GMT
+
+	    final SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz");
 
 		mRootElement = new RootElement("rss");
 
@@ -150,6 +153,8 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 			public void end(String body) {
 				try {
 					mFeedItem.setPubDate(df.parse(body));
+
+                    Log.d("DEBUGDEBUG", mFeedItem.getTitle() + ":" + body + " parsed into " + mFeedItem.getPubDate().toLocaleString());
 				}
 				catch (ParseException e) {
 					Log.e(getLogTag(), "Error parsing pubDate", e);
