@@ -153,8 +153,6 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 			public void end(String body) {
 				try {
 					mFeedItem.setPubDate(df.parse(body));
-
-                    Log.d("DEBUGDEBUG", mFeedItem.getTitle() + ":" + body + " parsed into " + mFeedItem.getPubDate().toLocaleString());
 				}
 				catch (ParseException e) {
 					Log.e(getLogTag(), "Error parsing pubDate", e);
