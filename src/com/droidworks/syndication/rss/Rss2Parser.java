@@ -192,13 +192,17 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 				final FeedItem tmpItem = mFeedItem;
 				mFeedItem = null;
 
+                // if a podcast entry doesn't have a guid, see if we can fix it.
+                if (tmpItem.getGuid() == null && tmpItem.getMediaUrl() != null)
+                    tmpItem.setGuid(tmpItem.getMediaUrl());
+
 				// only add feeditem if the pubdate isn't null,
 				// null pubdates cause a crash, and we can't sort
 				// without it..
 				if (tmpItem.getPubDate() != null) {
 					getFeed().addItem(tmpItem);
 				}
-				
+
 				// notify a listener if present
 				if (getListener() != null) {
                     OnItemParsedListener listener = getListener();
