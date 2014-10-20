@@ -197,6 +197,12 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
                     tmpItem.setDescription(tmpItem.getItunesSummary());
                 }
 
+                // try to fix a broken itunes summary
+                if (TextUtils.isEmpty(tmpItem.getItunesSummary()) && !TextUtils.isEmpty(tmpItem.getDescription())) {
+                    tmpItem.setItunesSummary(tmpItem.getDescription());
+                }
+
+
                 // if a podcast entry doesn't have a guid, see if we can fix it.
                 if (tmpItem.getGuid() == null && tmpItem.getMediaUrl() != null)
                     tmpItem.setGuid(tmpItem.getMediaUrl());

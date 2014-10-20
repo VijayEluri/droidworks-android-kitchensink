@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import android.text.TextUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 
@@ -143,6 +144,16 @@ public class AtomParser extends FeedParser {
 				
 				final FeedItem tmpItem = mFeedItem;
 				mFeedItem = null;
+
+                // try to fix a broken description
+                if (TextUtils.isEmpty(tmpItem.getDescription()) && !TextUtils.isEmpty(tmpItem.getItunesSummary())) {
+                    tmpItem.setDescription(tmpItem.getItunesSummary());
+                }
+
+                // try to fix a broken itunes summary
+                if (TextUtils.isEmpty(tmpItem.getItunesSummary()) && !TextUtils.isEmpty(tmpItem.getDescription())) {
+                    tmpItem.setItunesSummary(tmpItem.getDescription());
+                }
 
 				// only add feeditem if the pubdate isn't null,
 				// null pubdates cause a crash, and we can't sort
