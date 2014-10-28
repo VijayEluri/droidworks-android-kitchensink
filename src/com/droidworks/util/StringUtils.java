@@ -107,7 +107,7 @@ public class StringUtils {
 
 	  // just a simple method to transform values like 4 to 04, but
 	  // values like 14 will come back as 14.
-	  private static void appendWithLeadingZero(StringBuilder sb, long value) {
+	  public static void appendWithLeadingZero(StringBuilder sb, long value) {
 		  if (value < 10) {
 			  sb.append("0").append(value);
           }
