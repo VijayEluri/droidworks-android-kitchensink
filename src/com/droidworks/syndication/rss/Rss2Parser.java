@@ -63,6 +63,9 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 
 	    final SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz");
 
+        // handling Unparseable date: "2014-07-04 00:00:00.0"
+        final SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-d HH:mm:ss");
+
 		mRootElement = new RootElement("rss");
 
 		Element channelNode = mRootElement.getChild("channel");
@@ -155,7 +158,12 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 					mFeedItem.setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
-					Log.e(getLogTag(), "Error parsing pubDate", e);
+                    try {
+                        mFeedItem.setPubDate(df2.parse(body));
+                    }
+                    catch (ParseException e2) {
+                        Log.e(getLogTag(), "Error parsing pubDate", e2);
+                    }
 				}
 			}
 		});
