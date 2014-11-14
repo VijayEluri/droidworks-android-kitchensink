@@ -3,6 +3,7 @@ package com.droidworks.syndication.rss;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import com.droidworks.util.AndroidLogger;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 
@@ -12,7 +13,7 @@ import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.text.TextUtils;
-import android.util.Log;
+
 
 import com.droidworks.parsers.rss.itunes.DurationParser;
 import com.droidworks.syndication.FeedAdapter;
@@ -36,6 +37,7 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 
 	private FeedItem mFeedItem;
 	private FeedItemFactory mFeedItemFactory;
+    private AndroidLogger mLogger;
 
 	private static final String DEFAULT_NAMESPACE = "";
 	private static final String NS_ITUNES = "http://www.itunes.com/dtds/podcast-1.0.dtd";
@@ -45,9 +47,10 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 		super(DEFAULT_NAMESPACE);
 	}
 
-	public Rss2Parser(FeedItemFactory feedItemFactory) {
+	public Rss2Parser(FeedItemFactory feedItemFactory, AndroidLogger logger) {
 		super(DEFAULT_NAMESPACE);
 		mFeedItemFactory = feedItemFactory;
+        mLogger = logger;
 	}
 
 	@Override
@@ -162,7 +165,7 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
                         mFeedItem.setPubDate(df2.parse(body));
                     }
                     catch (ParseException e2) {
-                        Log.e(getLogTag(), "Error parsing pubDate", e2);
+                        mLogger.e(getLogTag(), "Error parsing pubDate", e2);
                     }
 				}
 			}
@@ -311,7 +314,7 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
 					getFeed().setPubDate(df.parse(body));
 				}
 				catch (ParseException e) {
-					Log.e(getClass().getCanonicalName(), "Error parsing pubDate");
+					mLogger.e(getClass().getCanonicalName(), "Error parsing pubDate");
 				}
 			}
 		});
