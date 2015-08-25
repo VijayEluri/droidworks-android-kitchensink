@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.media.AudioManager;
 import android.os.Build;
 
+@Deprecated
 public abstract class MediaButtonManager {
 
 	public abstract void register(AudioManager audioManager, ComponentName component);
