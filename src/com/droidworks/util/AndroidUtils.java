@@ -70,6 +70,24 @@ public class AndroidUtils {
         return info.toString();
     }
 
+    /**
+     * Gathers up information about the carrier if it's available
+     *
+     * @param context
+     * @return
+     */
+    public static String getTeleophonyInfo(Context context) {
+        StringBuilder info = new StringBuilder();
+
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        info.append("Netoorking information\n-------------------------\n");
+        info.append("network operator: " + tm.getNetworkOperator() + "\n");
+        info.append("network operator name: " + tm.getNetworkOperatorName()+ "\n");
+
+        return info.toString();
+    }
+
     public static boolean isAmazonDevice(Activity activity) {
         boolean isAmazonDevice = Build.MANUFACTURER.equalsIgnoreCase("amazon");
 
