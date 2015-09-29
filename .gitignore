@@ -5,3 +5,5 @@ bin/
 gen/
 *.iml
 module_droidworks-android-kitchensink.xml
+.gradle
+build/
