@@ -6,4 +6,7 @@ package com.droidworks.util;
 public interface AndroidLogger {
     abstract void e(String tag, String msg);
     abstract void e(String tag, String msg, Throwable tr);
+
+    abstract void d(String tag, String msg);
+    abstract void d(String tag, String msg, Throwable tr);
 }

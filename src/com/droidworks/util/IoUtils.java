@@ -1,6 +1,5 @@
 package com.droidworks.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 
 import java.io.*;
@@ -49,7 +48,6 @@ public class IoUtils {
      * @param filename
      * @return
      */
-    @TargetApi(8)
     public static String dumpToFile(Context context, String input, String filename) {
 
         File f = context.getExternalFilesDir(null);
