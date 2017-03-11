@@ -76,12 +76,12 @@ public class AndroidUtils {
      * @param context
      * @return
      */
-    public static String getTeleophonyInfo(Context context) {
+    public static String getTelephonyInfo(Context context) {
         StringBuilder info = new StringBuilder();
 
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        info.append("Netoorking information\n-------------------------\n");
+        info.append("Networking information\n-------------------------\n");
         info.append("network operator: " + tm.getNetworkOperator() + "\n");
         info.append("network operator name: " + tm.getNetworkOperatorName()+ "\n");
 
