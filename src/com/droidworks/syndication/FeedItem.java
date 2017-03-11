@@ -1,5 +1,7 @@
 package com.droidworks.syndication;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -77,7 +79,12 @@ public class FeedItem implements Serializable {
 	}
 
 	public String getGuid() {
-		return mGuid;
+        // if mGuid is null fall back to the link.
+		if (TextUtils.isEmpty(mGuid)) {
+            return mLink;
+        }
+
+        return mGuid;
 	}
 
 	public void setGuid(String guid) {
