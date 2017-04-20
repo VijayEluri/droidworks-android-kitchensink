@@ -2,6 +2,7 @@ package com.droidworks.syndication.rss;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import com.droidworks.util.AndroidLogger;
 import org.xml.sax.Attributes;
@@ -64,10 +65,10 @@ public class Rss2Parser<T extends FeedItem> extends FeedParser<T> {
         // example pubdate
         // Fri, 03 Oct 2014 01:18:04 GMT
 
-	    final SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz");
+	    final SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz", Locale.US);
 
         // handling Unparseable date: "2014-07-04 00:00:00.0"
-        final SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-d HH:mm:ss");
+        final SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.US);
 
 		mRootElement = new RootElement("rss");
 

@@ -3,6 +3,7 @@ package com.droidworks.syndication.atom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import android.text.TextUtils;
@@ -58,9 +59,9 @@ public class AtomParser extends FeedParser {
 		// 
 		// parsing this format is hard, i have a backup parser in case the
 		// first one fails.
-		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		final SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		final SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         df2.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 		Element entryNode = mRootElement.getChild(getDefaultNamespace(), "entry");
